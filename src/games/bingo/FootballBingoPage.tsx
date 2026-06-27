@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { PageShell } from "../../components/PageShell";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { getDailyPuzzle } from "../utilities/dailyPuzzle";
+import { getDailyPuzzle, getDailyStorageKey } from "../utilities/dailyPuzzle";
 
 const boards = [
   [
@@ -30,7 +30,8 @@ const boards = [
 
 export function FootballBingoPage() {
   const board = useMemo(() => getDailyPuzzle(boards), []);
-  const [marked, setMarked] = useLocalStorage<string[]>("tjt.bingo.progress", []);
+  const storageKey = useMemo(() => getDailyStorageKey("tjt.bingo.progress"), []);
+  const [marked, setMarked] = useLocalStorage<string[]>(storageKey, []);
 
   function toggleSquare(square: string) {
     setMarked(marked.includes(square) ? marked.filter((item) => item !== square) : [...marked, square]);
@@ -48,7 +49,7 @@ export function FootballBingoPage() {
               type="button"
               onClick={() => toggleSquare(square)}
               className={`aspect-square rounded border border-line p-3 text-sm font-semibold ${
-                active ? "bg-brand-blue text-white shadow-glow" : "bg-white/5"
+                active ? "bg-brand-blue text-white shadow-glow" : "brand-control"
               }`}
             >
               {square}
@@ -56,6 +57,13 @@ export function FootballBingoPage() {
           );
         })}
       </div>
+      <button
+        type="button"
+        onClick={() => setMarked([])}
+        className="mt-6 text-sm font-semibold text-brand-blue"
+      >
+        Reset today's board
+      </button>
     </PageShell>
   );
 }

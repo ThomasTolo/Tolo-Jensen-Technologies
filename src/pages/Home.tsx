@@ -5,21 +5,39 @@ import { Hero } from "../components/Hero";
 import { apps } from "../data/apps";
 
 export function Home() {
+  const pillars = [
+    {
+      label: "Student life",
+      text:
+        "Built from real student context at UiB: a bachelor in informatics, mathematics, statistics, and economics, now followed by a software-development master with machine-learning electives."
+    },
+    {
+      label: "Entertainment",
+      text:
+        "Daily Wordle, Connections, and Football Bingo are the lightweight side of the company: small games that make the site worth returning to."
+    },
+    {
+      label: "Useful tools",
+      text:
+        "Kollekt is the main product direction: software for shared households, built from real student-life problems around chores, money, planning, and living together."
+    }
+  ];
+
   return (
     <main>
       <Hero />
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-20 sm:px-8 lg:grid-cols-3">
-        {["Student life", "Entertainment", "Useful tools"].map((label) => (
+        {pillars.map((pillar) => (
           <motion.article
-            key={label}
+            key={pillar.label}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             className="brand-panel rounded-lg p-6"
           >
-            <h2 className="text-2xl font-semibold">{label}</h2>
+            <h2 className="text-2xl font-semibold">{pillar.label}</h2>
             <p className="brand-copy mt-3 leading-7">
-              Focused software experiences designed to feel calm, fast, and deliberate.
+              {pillar.text}
             </p>
           </motion.article>
         ))}

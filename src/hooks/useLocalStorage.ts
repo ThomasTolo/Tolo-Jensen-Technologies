@@ -7,7 +7,16 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     }
 
     const stored = window.localStorage.getItem(key);
-    return stored ? (JSON.parse(stored) as T) : initialValue;
+
+    if (!stored) {
+      return initialValue;
+    }
+
+    try {
+      return JSON.parse(stored) as T;
+    } catch {
+      return initialValue;
+    }
   });
 
   useEffect(() => {

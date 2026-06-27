@@ -32,7 +32,7 @@ export function Hero() {
             </Link>
             <Link
               to="/games"
-              className="inline-flex items-center gap-2 rounded border border-line bg-white/5 px-5 py-3 text-sm font-semibold text-steel"
+              className="brand-control inline-flex items-center gap-2 rounded border border-line px-5 py-3 text-sm font-semibold"
             >
               Play daily games
             </Link>

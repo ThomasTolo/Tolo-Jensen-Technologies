@@ -2,13 +2,15 @@ import { useMemo, useState } from "react";
 import { PageShell } from "../../components/PageShell";
 import { connectionsPuzzles } from "../../data/connections";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { getDailyPuzzle } from "../utilities/dailyPuzzle";
+import { getDailyPuzzle, getDailyStorageKey } from "../utilities/dailyPuzzle";
 
 export function ConnectionsPage() {
   const puzzle = useMemo(() => getDailyPuzzle(connectionsPuzzles), []);
   const words = useMemo(() => puzzle.groups.flatMap((group) => group.words).sort(), [puzzle]);
-  const [solved, setSolved] = useLocalStorage<string[]>("tjt.connections.progress", []);
+  const storageKey = useMemo(() => getDailyStorageKey("tjt.connections.progress"), []);
+  const [solved, setSolved] = useLocalStorage<string[]>(storageKey, []);
   const [selected, setSelected] = useState<string[]>([]);
+  const [message, setMessage] = useState("Select four words.");
 
   function toggleWord(word: string) {
     if (solved.includes(word)) {
@@ -28,7 +30,12 @@ export function ConnectionsPage() {
     if (match) {
       setSolved([...solved, ...match.words]);
       setSelected([]);
+      setMessage(`Correct: ${match.title}.`);
+      return;
     }
+
+    setSelected([]);
+    setMessage("Not a group. Try another four.");
   }
 
   return (
@@ -49,7 +56,7 @@ export function ConnectionsPage() {
                     ? "bg-brand-green text-white"
                     : isSelected
                       ? "bg-brand-blue text-white"
-                      : "bg-white/5"
+                      : "brand-control"
                 }`}
               >
                 {word}
@@ -65,6 +72,18 @@ export function ConnectionsPage() {
         >
           Submit group
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            setSolved([]);
+            setSelected([]);
+            setMessage("Select four words.");
+          }}
+          className="ml-4 mt-6 text-sm font-semibold text-brand-blue"
+        >
+          Reset today's puzzle
+        </button>
+        <p className="brand-copy mt-4 text-sm">{message}</p>
         <div className="mt-8 grid gap-3">
           {puzzle.groups
             .filter((group) => group.words.every((word) => solved.includes(word)))

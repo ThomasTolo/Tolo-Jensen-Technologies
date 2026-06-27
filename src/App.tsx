@@ -17,7 +17,7 @@ export default function App() {
   const location = useLocation();
 
   return (
-    <div className="brand-shell min-h-screen text-steel">
+    <div className="brand-shell min-h-screen">
       <Navbar />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>

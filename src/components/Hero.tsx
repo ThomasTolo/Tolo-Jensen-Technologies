@@ -1,0 +1,51 @@
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import logo from "../assets/Company Logo.png";
+
+export function Hero() {
+  return (
+    <section className="mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-20 pt-32 sm:px-8">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.55, ease: "easeOut" }}
+        className="grid gap-12 lg:grid-cols-[1fr_0.78fr] lg:items-center"
+      >
+        <div>
+          <p className="mb-5 text-sm font-semibold uppercase tracking-[0.24em] text-brand-blue">
+            Tolo Jensen Technologies
+          </p>
+          <h1 className="brand-title max-w-4xl text-5xl font-semibold tracking-normal sm:text-7xl">
+            Building polished software experiences for everyday life, apps, and play.
+          </h1>
+          <p className="brand-copy mt-7 max-w-2xl text-lg leading-8">
+            A Norwegian software company creating clean products, useful tools, and daily
+            browser games with a focused, premium feel.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-4">
+            <Link
+              to="/apps"
+              className="inline-flex items-center gap-2 rounded bg-brand-blue px-5 py-3 text-sm font-semibold text-white shadow-glow"
+            >
+              Explore apps <ArrowRight size={18} />
+            </Link>
+            <Link
+              to="/games"
+              className="inline-flex items-center gap-2 rounded border border-line bg-white/5 px-5 py-3 text-sm font-semibold text-steel"
+            >
+              Play daily games
+            </Link>
+          </div>
+        </div>
+        <div className="flex justify-center lg:justify-end">
+          <img
+            src={logo}
+            alt="Tolo Jensen Technologies logo"
+            className="aspect-square w-full max-w-md rounded-lg border border-line object-cover shadow-glow"
+          />
+        </div>
+      </motion.div>
+    </section>
+  );
+}

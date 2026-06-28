@@ -94,8 +94,8 @@ export function About() {
               <h2 className="text-xl font-semibold">FeedApp</h2>
               <p className="brand-copy mt-2 leading-7">
                 {norwegian
-                  ? "Et fullstack universitetsprosjekt bygget i team med moderne verktøy og GitHub-flyt."
-                  : "A collaborative full-stack university project built with a modern stack and GitHub-based teamwork."}
+                  ? "Et fullstack universitetsprosjekt bygget i team med moderne techstack."
+                  : "A collaborative full-stack university project built with a modern stack."}
               </p>
             </div>
             <div>
@@ -110,7 +110,7 @@ export function About() {
               <h2 className="text-xl font-semibold">Java Snake</h2>
               <p className="brand-copy mt-2 leading-7">
                 {norwegian
-                  ? "Objektorientert Java-implementasjon av Snake fra tidlige informatikkemner."
+                  ? "Objektorientert Java-implementasjon av Snake fra tidligere informatikkemne."
                   : "Object-oriented Java implementation of Snake from early informatics coursework."}
               </p>
             </div>

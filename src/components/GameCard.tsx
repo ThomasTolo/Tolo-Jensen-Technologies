@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 
 type GameCardProps = {
   title: string;
@@ -8,6 +9,8 @@ type GameCardProps = {
 };
 
 export function GameCard({ title, description, to }: GameCardProps) {
+  const { language } = useLanguage();
+
   return (
     <Link
       to={to}
@@ -16,7 +19,7 @@ export function GameCard({ title, description, to }: GameCardProps) {
       <h2 className="text-2xl font-semibold">{title}</h2>
       <p className="brand-copy mt-3 leading-7">{description}</p>
       <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
-        Open <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+        {language === "no" ? "Åpne" : "Open"} <ArrowRight size={16} className="transition group-hover:translate-x-1" />
       </span>
     </Link>
   );

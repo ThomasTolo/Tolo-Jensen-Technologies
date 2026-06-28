@@ -25,24 +25,24 @@ export const apps: AppInfo[] = [
     status: "In Development",
     tagline: "Shared living, made lighter.",
     description:
-      "A mobile-first app for collectives and shared households: chores, expenses, shopping, calendar, chat, rewards, and party games in one polished place.",
+      "A mobile-first app for shared households: chores, expenses, shopping, calendar, chat, rewards, and party games in one calm place.",
     technologies: ["React", "TypeScript", "Capacitor", "Kotlin", "Spring Boot", "PostgreSQL", "WebSockets"],
     image: kollektImage,
     norwegian: {
       status: "Under utvikling",
       tagline: "Kollektivlivet, gjort enklere.",
       description:
-        "En mobilførst app for kollektiv og delte hjem: oppgaver, utgifter, handleliste, kalender, chat, belønninger og festspill samlet på ett ryddig sted."
+        "En mobilførst app for kollektiv: oppgaver, utgifter, handleliste, kalender, chat, belønninger og festspill samlet på ett rolig sted."
     },
     highlights: [
       "Split expenses and settle up with payment links",
       "Keep chores, shopping, events, quiet hours, and house rules together",
-      "Make shared living more fun with XP, achievements, leaderboards, kudos, and in-app party games"
+      "Make the household feel lighter with XP, kudos, and party games"
     ],
     norwegianHighlights: [
       "Del utgifter og gjør opp med betalingslenker",
       "Samle oppgaver, handling, kalender, stilletid og husregler",
-      "Gjør kollektivlivet morsommere med XP, achievements, topplister, kudos og partyspill"
+      "Gjør hjemmet litt lettere med XP, kudos og partyspill"
     ],
     technicalHighlights: [
       "React + TypeScript Vite frontend with Capacitor iOS/Android shells",
@@ -57,13 +57,23 @@ export const apps: AppInfo[] = [
     name: "App 2",
     status: "Exploration",
     description: "A future product from Tolo Jensen Technologies.",
-    technologies: ["React", "TypeScript"]
+    technologies: ["React", "TypeScript"],
+    norwegian: {
+      status: "Utforskes",
+      tagline: "Neste idé i arbeid.",
+      description: "Et fremtidig produkt fra Tolo Jensen Technologies."
+    }
   },
   {
     slug: "app-3",
     name: "App 3",
     status: "Planned",
-    description: "A polished software experience currently on the roadmap.",
-    technologies: ["Product Design", "Frontend"]
+    description: "A focused software product currently on the roadmap.",
+    technologies: ["Product Design", "Frontend"],
+    norwegian: {
+      status: "Planlagt",
+      tagline: "På vei inn i planen.",
+      description: "Et fokusert programvareprodukt som ligger på planen."
+    }
   }
 ];

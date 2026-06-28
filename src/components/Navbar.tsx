@@ -6,11 +6,11 @@ import { useLanguage } from "../context/LanguageContext";
 import { useTheme } from "../context/ThemeContext";
 
 const links = [
-  { to: "/apps", label: "Apps" },
-  { to: "/games", label: "Games" },
-  { to: "/about", label: "About" },
-  { to: "/roadmap", label: "Roadmap" },
-  { to: "/contact", label: "Contact" }
+  { to: "/apps", en: "Apps", no: "Apper" },
+  { to: "/games", en: "Games", no: "Spill" },
+  { to: "/about", en: "About", no: "Om" },
+  { to: "/roadmap", en: "Roadmap", no: "Plan" },
+  { to: "/contact", en: "Contact", no: "Kontakt" }
 ];
 
 export function Navbar() {
@@ -21,6 +21,7 @@ export function Navbar() {
   const ThemeIcon = themeIcons[theme];
   const nextTheme = theme === "light" ? "dark" : "light";
   const languageLabel = language === "no" ? "🇳🇴 NO" : "🇬🇧 EN";
+  const norwegian = language === "no";
 
   return (
     <header className="brand-nav fixed left-0 right-0 top-0 z-50 border-b border-line backdrop-blur-xl">
@@ -41,12 +42,12 @@ export function Navbar() {
                 `text-sm font-medium ${isActive ? "text-brand-blue" : "brand-copy"}`
               }
             >
-              {link.label}
+              {norwegian ? link.no : link.en}
             </NavLink>
           ))}
           <button
             type="button"
-            title={`Theme: ${theme}`}
+            title={norwegian ? `Tema: ${theme}` : `Theme: ${theme}`}
             onClick={() => setTheme(nextTheme)}
             className="brand-control grid h-10 w-10 place-items-center rounded border border-line"
           >
@@ -54,7 +55,7 @@ export function Navbar() {
           </button>
           <button
             type="button"
-            title={`Language: ${language === "no" ? "Norwegian" : "English"}`}
+            title={norwegian ? "Språk: norsk" : "Language: English"}
             onClick={toggleLanguage}
             className="brand-control inline-flex h-10 items-center gap-2 rounded border border-line px-3 text-sm font-semibold"
           >
@@ -65,7 +66,7 @@ export function Navbar() {
 
         <button
           type="button"
-          title="Menu"
+          title={norwegian ? "Meny" : "Menu"}
           onClick={() => setOpen((value) => !value)}
           className="brand-control grid h-10 w-10 place-items-center rounded border border-line md:hidden"
         >
@@ -78,7 +79,7 @@ export function Navbar() {
           <div className="flex flex-col gap-4">
             {links.map((link) => (
               <NavLink key={link.to} to={link.to} onClick={() => setOpen(false)} className="text-base">
-                {link.label}
+                {norwegian ? link.no : link.en}
               </NavLink>
             ))}
             <button
@@ -87,7 +88,7 @@ export function Navbar() {
               className="brand-control flex items-center gap-3 rounded border border-line px-4 py-3 text-left"
             >
               <ThemeIcon size={18} />
-              Theme: {theme}
+              {norwegian ? "Tema" : "Theme"}: {theme}
             </button>
             <button
               type="button"
@@ -95,7 +96,7 @@ export function Navbar() {
               className="brand-control flex items-center gap-3 rounded border border-line px-4 py-3 text-left"
             >
               <Globe2 size={18} />
-              Language: {languageLabel}
+              {norwegian ? "Språk" : "Language"}: {languageLabel}
             </button>
           </div>
         </div>

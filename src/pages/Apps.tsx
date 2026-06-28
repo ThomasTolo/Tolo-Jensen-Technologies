@@ -1,13 +1,21 @@
 import { AppCard } from "../components/AppCard";
 import { PageShell } from "../components/PageShell";
+import { useLanguage } from "../context/LanguageContext";
 import { apps } from "../data/apps";
 
 export function Apps() {
+  const { language } = useLanguage();
+  const norwegian = language === "no";
+
   return (
     <PageShell
-      eyebrow="My Apps"
-      title="Software products from Tolo Jensen Technologies."
-      intro="A growing collection of app experiences, starting with Kollekt."
+      eyebrow={norwegian ? "Apper" : "Apps"}
+      title={norwegian ? "Produkter fra Tolo Jensen Technologies." : "Products from Tolo Jensen Technologies."}
+      intro={
+        norwegian
+          ? "En liten, voksende samling programvare, med Kollekt først ut."
+          : "A small, growing collection of software, starting with Kollekt."
+      }
     >
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {apps.map((app) => (

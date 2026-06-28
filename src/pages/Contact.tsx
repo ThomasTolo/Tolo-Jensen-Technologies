@@ -1,20 +1,32 @@
 import { Github, Linkedin, Mail } from "lucide-react";
 import { PageShell } from "../components/PageShell";
+import { useLanguage } from "../context/LanguageContext";
 
 export function Contact() {
+  const { language } = useLanguage();
+  const norwegian = language === "no";
+
   return (
     <PageShell
-      eyebrow="Contact"
-      title="Start a conversation with Tolo Jensen Technologies."
-      intro="This frontend-only site avoids collecting form data. Email is the safest contact path until a backend and privacy policy are added."
+      eyebrow={norwegian ? "Kontakt" : "Contact"}
+      title={
+        norwegian
+          ? "Ta kontakt med Tolo Jensen Technologies."
+          : "Get in touch with Tolo Jensen Technologies."
+      }
+      intro={
+        norwegian
+          ? "Nettsiden samler ikke inn skjemadata. Send en e-post, så svarer jeg direkte."
+          : "This site does not collect form data. Send an email and I will reply directly."
+      }
     >
       <div className="flex flex-wrap gap-4">
         <a
-          href="mailto:hello@tolojensen.com"
+          href="mailto:bedrift.tolo@gmail.com"
           className="inline-flex items-center gap-3 rounded bg-brand-blue px-5 py-3 text-sm font-semibold text-white shadow-glow"
         >
           <Mail size={18} />
-          hello@tolojensen.com
+          bedrift.tolo@gmail.com
         </a>
         <a
           href="https://www.linkedin.com/in/thomastolojensen/"

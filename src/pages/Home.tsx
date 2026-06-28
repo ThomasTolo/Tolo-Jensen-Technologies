@@ -2,24 +2,30 @@ import { motion } from "framer-motion";
 import { AppCard } from "../components/AppCard";
 import { GameCard } from "../components/GameCard";
 import { Hero } from "../components/Hero";
+import { useLanguage } from "../context/LanguageContext";
 import { apps } from "../data/apps";
 
 export function Home() {
+  const { language } = useLanguage();
+  const norwegian = language === "no";
   const pillars = [
     {
-      label: "Student life",
-      text:
-        "Built from real student context at UiB: a bachelor in informatics, mathematics, statistics, and economics, now followed by a software-development master with machine-learning electives."
+      label: norwegian ? "Student ved UiB og HVL" : "Student at UiB and HVL",
+      text: norwegian
+        ? "Jeg har fullført en bachelor i informatikk, matematikk og økonomi, og tar nå master i programvareutvikling ved UiB og HVL med maskinlæring som retning."
+        : "I completed a bachelor in informatics, mathematics, and economics, and I am now taking a collaborative Software Engineering master at UiB and HVL with a machine-learning branch."
     },
     {
-      label: "Entertainment",
-      text:
-        "Daily Wordle, Connections, and Football Bingo are the lightweight side of the company: small games that make the site worth returning to."
+      label: norwegian ? "Små spill" : "Small games",
+      text: norwegian
+        ? "Wordle, Connections og Football Bingo har 100 daglige brett og bytter ved midnatt."
+        : "Wordle, Connections, and Football Bingo have 100 daily boards and change at midnight."
     },
     {
-      label: "Useful tools",
-      text:
-        "Kollekt is the main product direction: software for shared households, built from real student-life problems around chores, money, planning, and living together."
+      label: norwegian ? "Nyttige verktøy" : "Useful tools",
+      text: norwegian
+        ? "Kollekt er hovedretningen: et ryddigere sted for oppgaver, utgifter, planer og alt som følger med å bo sammen."
+        : "Kollekt is the main direction: a cleaner place for chores, expenses, plans, and everything that comes with living together."
     }
   ];
 
@@ -46,7 +52,7 @@ export function Home() {
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-blue">
-              Featured app
+              {norwegian ? "Fremhevet app" : "Featured app"}
             </p>
             <h2 className="mt-3 text-4xl font-semibold">Kollekt</h2>
           </div>
@@ -56,13 +62,25 @@ export function Home() {
         </div>
       </section>
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-20 sm:px-8 md:grid-cols-3">
-        <GameCard title="Daily Wordle" description="Guess today's five-letter word." to="/games/wordle" />
         <GameCard
-          title="Daily Connections"
-          description="Group sixteen words into four hidden categories."
+          title={norwegian ? "Dagens Wordle" : "Daily Wordle"}
+          description={norwegian ? "Gjett dagens ord på fem bokstaver." : "Guess today's five-letter word."}
+          to="/games/wordle"
+        />
+        <GameCard
+          title={norwegian ? "Dagens Connections" : "Daily Connections"}
+          description={
+            norwegian
+              ? "Sorter seksten ord i fire skjulte grupper."
+              : "Group sixteen words into four hidden categories."
+          }
           to="/games/connections"
         />
-        <GameCard title="Football Bingo" description="A quick daily football-themed grid." to="/games/bingo" />
+        <GameCard
+          title="Football Bingo"
+          description={norwegian ? "En rask daglig fotballrute." : "A quick daily football grid."}
+          to="/games/bingo"
+        />
       </section>
     </main>
   );

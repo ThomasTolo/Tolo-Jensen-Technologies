@@ -1,8 +1,13 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import type { AppInfo } from "../data/apps";
 
 export function AppCard({ app }: { app: AppInfo }) {
+  const { language } = useLanguage();
+  const norwegian = language === "no" && Boolean(app.norwegian);
+  const copy = norwegian ? app.norwegian! : app;
+
   return (
     <Link
       to={`/apps/${app.slug}`}
@@ -16,9 +21,9 @@ export function AppCard({ app }: { app: AppInfo }) {
         </div>
       )}
       <div className="flex flex-1 flex-col p-6">
-        <p className="text-sm font-medium text-brand-blue">{app.status}</p>
+        <p className="text-sm font-medium text-brand-blue">{copy.status}</p>
         <h2 className="mt-3 text-2xl font-semibold">{app.name}</h2>
-        <p className="brand-copy mt-3 flex-1 leading-7">{app.description}</p>
+        <p className="brand-copy mt-3 flex-1 leading-7">{copy.description}</p>
         <div className="mt-5 flex flex-wrap gap-2">
           {app.technologies.map((technology) => (
             <span key={technology} className="rounded border border-line px-3 py-1 text-xs">
@@ -27,7 +32,7 @@ export function AppCard({ app }: { app: AppInfo }) {
           ))}
         </div>
         <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
-          View app <ArrowRight size={16} className="transition group-hover:translate-x-1" />
+          {language === "no" ? "Se app" : "View app"} <ArrowRight size={16} className="transition group-hover:translate-x-1" />
         </span>
       </div>
     </Link>

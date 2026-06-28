@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm /Users/thoma/Desktop/Tolo-Jensen-Technologies/.git/index.lock)"
+    ],
+    "additionalDirectories": [
+      "/Users/thoma/Desktop/Tolo-Jensen-Technologies/.git"
+    ]
+  }
+}

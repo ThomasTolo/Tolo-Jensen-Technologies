@@ -2,8 +2,12 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import logo from "../assets/Company Logo.png";
+import { useLanguage } from "../context/LanguageContext";
 
 export function Hero() {
+  const { language } = useLanguage();
+  const norwegian = language === "no";
+
   return (
     <section className="mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-20 pt-32 sm:px-8">
       <motion.div
@@ -17,24 +21,27 @@ export function Hero() {
             Tolo Jensen Technologies
           </p>
           <h1 className="brand-title max-w-4xl text-5xl font-semibold tracking-normal sm:text-7xl">
-            Building polished software experiences for everyday life, apps, and play.
+            {norwegian
+              ? "Programvare for hverdagen, laget med ro og presisjon."
+              : "Software for everyday life, built with care and clarity."}
           </h1>
           <p className="brand-copy mt-7 max-w-2xl text-lg leading-8">
-            A Norwegian software company creating clean products, useful tools, and daily
-            browser games with a focused, premium feel.
+            {norwegian
+              ? "Tolo Jensen Technologies bygger Kollekt, nyttige verktøy og små spill folk faktisk kommer tilbake til."
+              : "Tolo Jensen Technologies builds Kollekt, useful tools, and small games people actually return to."}
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <Link
               to="/apps"
               className="inline-flex items-center gap-2 rounded bg-brand-blue px-5 py-3 text-sm font-semibold text-white shadow-glow"
             >
-              Explore apps <ArrowRight size={18} />
+              {norwegian ? "Se appene" : "Explore apps"} <ArrowRight size={18} />
             </Link>
             <Link
               to="/games"
               className="brand-control inline-flex items-center gap-2 rounded border border-line px-5 py-3 text-sm font-semibold"
             >
-              Play daily games
+              {norwegian ? "Spill dagens spill" : "Play daily games"}
             </Link>
           </div>
         </div>

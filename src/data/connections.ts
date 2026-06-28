@@ -10,7 +10,7 @@ export type ConnectionsPuzzle = {
 const groupBank: ConnectionsGroup[] = [
   { title: "Frontend tools", words: ["REACT", "VITE", "TAILWIND", "ROUTER"] },
   { title: "Company pages", words: ["HOME", "ABOUT", "APPS", "CONTACT"] },
-  { title: "Daily games", words: ["WORDLE", "BINGO", "SUDOKU", "MEMORY"] },
+  { title: "Daily games", words: ["WORDS", "BINGO", "SUDOKU", "MEMORY"] },
   { title: "Brand traits", words: ["CLEAN", "FAST", "POLISHED", "SECURE"] },
   { title: "Norway signals", words: ["BERGEN", "FJORD", "NORDIC", "OSLO"] },
   { title: "App states", words: ["PLANNED", "LIVE", "BETA", "DRAFT"] },

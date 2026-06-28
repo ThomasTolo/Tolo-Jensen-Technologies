@@ -16,16 +16,16 @@ export function Home() {
         : "I completed a bachelor in informatics, mathematics, and economics, and I am now taking a collaborative Software Engineering master at UiB and HVL with a machine-learning branch."
     },
     {
-      label: norwegian ? "Små spill" : "Small games",
+      label: norwegian ? "Daglige spill" : "Daily games",
       text: norwegian
-        ? "Wordle, Connections og Football Bingo har 100 daglige brett og bytter ved midnatt."
-        : "Wordle, Connections, and Football Bingo have 100 daily boards and change at midnight."
+        ? "Ord, grupper, VM-bingo og to musikkspill har 100 daglige brett og bytter ved midnatt."
+        : "Word guessing, groups, World Cup bingo, and two music games have 100 daily boards and change at midnight."
     },
     {
-      label: norwegian ? "Nyttige verktøy" : "Useful tools",
+      label: norwegian ? "Prosjekter" : "Projects",
       text: norwegian
-        ? "Kollekt er hovedretningen: et ryddigere sted for oppgaver, utgifter, planer og alt som følger med å bo sammen."
-        : "Kollekt is the main direction: a cleaner place for chores, expenses, plans, and everything that comes with living together."
+        ? "Kollekt er nyeste prosjekt: et ryddigere sted for oppgaver, utgifter, planer og alt som følger med å bo sammen."
+        : "Kollekt is the latest project: a cleaner place for chores, expenses, plans, and everything that comes with living together."
     }
   ];
 
@@ -63,12 +63,12 @@ export function Home() {
       </section>
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-20 sm:px-8 md:grid-cols-3">
         <GameCard
-          title={norwegian ? "Dagens Wordle" : "Daily Wordle"}
+          title={norwegian ? "Dagens ord" : "Daily Word Guess"}
           description={norwegian ? "Gjett dagens ord på fem bokstaver." : "Guess today's five-letter word."}
           to="/games/wordle"
         />
         <GameCard
-          title={norwegian ? "Dagens Connections" : "Daily Connections"}
+          title={norwegian ? "Dagens grupper" : "Daily Groups"}
           description={
             norwegian
               ? "Sorter seksten ord i fire skjulte grupper."
@@ -77,9 +77,19 @@ export function Home() {
           to="/games/connections"
         />
         <GameCard
-          title="Football Bingo"
-          description={norwegian ? "En rask daglig fotballrute." : "A quick daily football grid."}
+          title={norwegian ? "Lydrute" : "Tune Grid"}
+          description={norwegian ? "Løs korte musikkpreviews i et rutenett." : "Solve short music previews in a grid."}
+          to="/games/tune-grid"
+        />
+        <GameCard
+          title={norwegian ? "VM-bingo" : "World Cup Bingo"}
+          description={norwegian ? "Marker realistiske VM-hendelser." : "Mark realistic World Cup events."}
           to="/games/bingo"
+        />
+        <GameCard
+          title={norwegian ? "Låtklipp" : "Snippet Guess"}
+          description={norwegian ? "Gjett låten uten å kunne spille klipp på nytt." : "Guess the song without replaying clips."}
+          to="/games/song-snippet"
         />
       </section>
     </main>

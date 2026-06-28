@@ -62,6 +62,9 @@ export function ConnectionsPage() {
       return;
     }
 
+    const oneAway = puzzle.groups.some(
+      (group) => !solvedSet.has(group.title) && group.words.filter((word) => selected.includes(word)).length === 3
+    );
     const nextMistakes = Math.min(maxMistakes, mistakes + 1);
     setMistakes(nextMistakes);
     setSelected([]);
@@ -70,6 +73,10 @@ export function ConnectionsPage() {
         ? norwegian
           ? "Ingen forsøk igjen."
           : "No mistakes remaining."
+        : oneAway
+          ? norwegian
+            ? "1 unna"
+            : "One away."
         : norwegian
           ? "Ikke en gruppe. Prøv igjen."
           : "Not a group. Try again."
@@ -90,11 +97,20 @@ export function ConnectionsPage() {
 
   return (
     <PageShell
-      eyebrow={norwegian ? "Dagens Connections" : "Daily Connections"}
-      title="Connections"
+      eyebrow={norwegian ? "Dagens grupper" : "Daily Groups"}
+      title={norwegian ? "Grupper" : "Groups"}
       intro={norwegian ? "Lag fire grupper på fire." : "Create four groups of four."}
     >
       <div className="mx-auto max-w-3xl">
+        <details className="brand-panel mb-6 rounded-lg p-5">
+          <summary className="cursor-pointer font-semibold">{norwegian ? "Slik spiller du" : "How it works"}</summary>
+          <p className="brand-copy mt-3 leading-7">
+            {norwegian
+              ? "Velg fire ord som hører sammen og send inn. Du har fire feil. Hvis tre av ordene er fra samme gruppe får du beskjeden 1 unna."
+              : "Select four related words and submit them. You have four mistakes. If three words are from the same group, you will see One away."}
+          </p>
+        </details>
+
         <div className="grid gap-3">
           {puzzle.groups
             .filter((group) => solvedSet.has(group.title))

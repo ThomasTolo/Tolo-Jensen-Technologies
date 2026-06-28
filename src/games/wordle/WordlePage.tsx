@@ -98,8 +98,8 @@ export function WordlePage() {
 
   return (
     <PageShell
-      eyebrow={norwegian ? "Dagens Wordle" : "Daily Wordle"}
-      title="Wordle"
+      eyebrow={norwegian ? "Dagens ord" : "Daily Word Guess"}
+      title={norwegian ? "Ordspill" : "Word Guess"}
       intro={
         norwegian
           ? "Seks forsøk. Fargene viser om bokstavene er riktige, feilplassert eller ikke med."
@@ -107,6 +107,15 @@ export function WordlePage() {
       }
     >
       <div className="mx-auto flex max-w-lg flex-col items-center">
+        <details className="brand-panel mb-6 w-full rounded-lg p-5">
+          <summary className="cursor-pointer font-semibold">{norwegian ? "Slik spiller du" : "How it works"}</summary>
+          <p className="brand-copy mt-3 leading-7">
+            {norwegian
+              ? "Skriv et ord på fem bokstaver. Grønn betyr riktig bokstav på riktig plass, gul betyr riktig bokstav på feil plass, og mørk betyr at bokstaven ikke er med."
+              : "Type a five-letter word. Green means the right letter in the right spot, yellow means the right letter in the wrong spot, and dark means the letter is not in the word."}
+          </p>
+        </details>
+
         <div className="grid w-full max-w-sm gap-2">
           {Array.from({ length: 6 }).map((_, row) => {
             const guess = guesses[row] ?? (row === guesses.length ? entry : "");

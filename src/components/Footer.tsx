@@ -15,7 +15,7 @@ export function Footer() {
           <Link to="/roadmap">{norwegian ? "Plan" : "Roadmap"}</Link>
           <Link to="/contact">{norwegian ? "Kontakt" : "Contact"}</Link>
         </div>
-        <p>{norwegian ? "Prøv det vi bygger." : "Try what we are building."}</p>
+        <p>{norwegian ? "Thomas Tolo Jensen." : "Thomas Tolo Jensen."}</p>
       </div>
     </footer>
   );

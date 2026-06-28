@@ -5,6 +5,14 @@ import { useLanguage } from "../context/LanguageContext";
 export function Contact() {
   const { language } = useLanguage();
   const norwegian = language === "no";
+  const collaborators = [
+    "Thomas Tolo Jensen (Owner)",
+    "Magnus Fjeldstad",
+    "Jonas Heen Opsahl",
+    "Fredric Hegland",
+    "Erlend André Høntorp",
+    "Tobias Skodven"
+  ];
 
   return (
     <PageShell
@@ -16,8 +24,8 @@ export function Contact() {
       }
       intro={
         norwegian
-          ? "Nettsiden samler ikke inn skjemadata. Send en e-post, så svarer jeg direkte."
-          : "This site does not collect form data. Send an email and I will reply directly."
+          ? "Send en e-post, så svarer jeg direkte."
+          : "Send an email and I will reply directly."
       }
     >
       <div className="flex flex-wrap gap-4">
@@ -46,6 +54,16 @@ export function Contact() {
           <Github size={18} />
           GitHub
         </a>
+      </div>
+      <div className="brand-panel mt-8 max-w-xl rounded-lg p-6">
+        <label htmlFor="collaborators" className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-blue">
+          {norwegian ? "Samarbeidspartnere" : "Collaborators"}
+        </label>
+        <select id="collaborators" className="brand-control mt-4 w-full rounded border border-line px-4 py-3">
+          {collaborators.map((name) => (
+            <option key={name}>{name}</option>
+          ))}
+        </select>
       </div>
     </PageShell>
   );

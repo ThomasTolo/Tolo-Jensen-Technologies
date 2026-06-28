@@ -9,11 +9,11 @@ export function Games() {
   return (
     <PageShell
       eyebrow={norwegian ? "Spill" : "Games"}
-      title={norwegian ? "Daglige spill som byttes ved midnatt." : "Daily games that change at midnight."}
+      title={norwegian ? "Daglige spill." : "Daily games."}
       intro={
         norwegian
-          ? "Wordle, Connections og Football Bingo har hver sin 100-dagers syklus. Fremgangen lagres bare i nettleseren din."
-          : "Wordle, Connections, and Football Bingo each have a 100-day cycle. Progress stays in your browser."
+          ? "Wordle, Connections og Football Bingo - prøv dem hver dag."
+          : "Wordle, Connections, and Football Bingo — try them every day."
       }
     >
       <div className="grid gap-6 md:grid-cols-3">

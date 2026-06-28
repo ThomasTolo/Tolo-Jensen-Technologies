@@ -22,8 +22,8 @@ export function Hero() {
           </p>
           <h1 className="brand-title max-w-4xl text-5xl font-semibold tracking-normal sm:text-7xl">
             {norwegian
-              ? "Programvare for hverdagen, laget med ro og presisjon."
-              : "Software for everyday life, built with care and clarity."}
+              ? "Programvare for hverdagen, bygget med kvalitet"
+              : "Software for everyday life, built with quality."}
           </h1>
           <p className="brand-copy mt-7 max-w-2xl text-lg leading-8">
             {norwegian

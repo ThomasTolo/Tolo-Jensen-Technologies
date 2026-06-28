@@ -40,8 +40,8 @@ export const apps: AppInfo[] = [
       "Make the household feel lighter with XP, kudos, and party games"
     ],
     norwegianHighlights: [
-      "Del utgifter og gjør opp med betalingslenker",
       "Samle oppgaver, handling, kalender, stilletid og husregler",
+      "Del utgifter og gjør opp",
       "Gjør hjemmet litt lettere med XP, kudos og partyspill"
     ],
     technicalHighlights: [

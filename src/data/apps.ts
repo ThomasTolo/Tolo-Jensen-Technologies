@@ -32,7 +32,7 @@ export const apps: AppInfo[] = [
       status: "Under utvikling",
       tagline: "Kollektivlivet, gjort enklere.",
       description:
-        "En mobilførst app for kollektiv: oppgaver, utgifter, handleliste, kalender, chat, belønninger og festspill samlet på ett rolig sted."
+        "En mobil-app for kollektiv: oppgaver, utgifter, handleliste, kalender, chat, belønninger og drikkespill samlet på ett sted."
     },
     highlights: [
       "Split expenses and settle up with payment links",

@@ -45,7 +45,6 @@ export function TuneGridPage() {
   const [letters, setLetters] = useLocalStorage<Record<string, string>>(storageKey, {});
   const [selectedKey, setSelectedKey] = useState(Object.keys(puzzle.cells)[0]);
   const [activeEntryId, setActiveEntryId] = useState(puzzle.entries[0]?.id ?? "");
-  const [revealedHints, setRevealedHints] = useState<string[]>([]);
   const [previews, setPreviews] = useState<Record<string, TrackPreview | null>>({});
   const [playingEntryId, setPlayingEntryId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -163,8 +162,8 @@ export function TuneGridPage() {
           <summary className="cursor-pointer font-semibold">{norwegian ? "Slik spiller du" : "How it works"}</summary>
           <p className="brand-copy mt-3 leading-7">
             {norwegian
-              ? "Velg en rute eller en ledetråd, spill av previewen, og skriv låttittelen. Delte ruter må passe både vannrett og loddrett. Hint bruker artist, sjanger og korte beskrivelser, ikke sangtekster."
-              : "Pick a square or clue, play the preview, and type the song title. Shared squares must fit both across and down. Hints use artist, genre, and short descriptions, not lyrics."}
+              ? "Alle svar er låttitler. Velg en rute eller en ledetråd, spill av previewen, og skriv låttittelen. Hint fyller inn riktig bokstav i ruten du står på."
+              : "Every answer is a song title. Pick a square or clue, play the preview, and type the song title. Hints fill the correct letter in your current square."}
           </p>
         </details>
 
@@ -222,7 +221,6 @@ export function TuneGridPage() {
                     .filter((entry) => entry.direction === direction)
                     .map((entry) => {
                       const active = entry.id === activeEntryId;
-                      const hintShown = revealedHints.includes(entry.id);
 
                       return (
                         <button
@@ -241,7 +239,9 @@ export function TuneGridPage() {
                             {entry.number}
                             {direction === "across" ? "A" : "D"}
                           </span>{" "}
-                          {hintShown ? `${entry.track.artist} - ${entry.track.hint}` : `${entry.track.genre} preview`}
+                          {norwegian
+                            ? `Låttittel: ${entry.track.genre}-preview`
+                            : `Song title: ${entry.track.genre} preview`}
                         </button>
                       );
                     })}
@@ -255,6 +255,9 @@ export function TuneGridPage() {
                   {activeEntry.number}
                   {activeEntry.direction === "across" ? "A" : "D"}
                 </p>
+                <p className="brand-copy mt-3 text-sm">
+                  {norwegian ? "Skriv låttittelen." : "Write the song title."}
+                </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <button
                     type="button"
@@ -266,10 +269,16 @@ export function TuneGridPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRevealedHints((current) => [...new Set([...current, activeEntry.id])])}
+                    onClick={() => {
+                      if (!selectedCell) {
+                        return;
+                      }
+
+                      setLetters((current) => ({ ...current, [selectedKey]: selectedCell.letter }));
+                    }}
                     className="brand-control rounded border border-line px-4 py-3 text-sm font-semibold"
                   >
-                    {norwegian ? "Vis hint" : "Show hint"}
+                    {norwegian ? "Fyll bokstav" : "Fill letter"}
                   </button>
                 </div>
                 {previews[activeEntry.id]?.trackViewUrl ? (

@@ -10,86 +10,89 @@ type CustomBoard = {
   prompts: string[];
 };
 
-const worldCupPrompts = [
-  "Goal from a set piece",
-  "VAR check changes a call",
-  "Penalty awarded",
-  "Penalty missed or saved",
-  "Goal after 80 minutes",
-  "Header from a cross",
-  "Counter-attack goal",
-  "Substitute scores",
-  "Captain gets an assist",
-  "Goalkeeper makes a big save",
-  "Shot hits the post or bar",
-  "Yellow card for time wasting",
-  "Free kick on target",
-  "Corner leads to a chance",
-  "Offside goal ruled out",
-  "Underdog scores first",
-  "Favorite controls possession",
-  "Extra time is mentioned",
-  "Player cramps late",
-  "Defender blocks a shot",
-  "Long-range shot",
-  "Own goal scare",
-  "Teenager comes on",
-  "Coach changes formation",
-  "Crowd sings after a goal",
-  "Handball appeal",
-  "Keeper punches a cross",
-  "Striker misses a sitter",
-  "Midfielder wins a duel",
-  "Fullback overlaps",
-  "Group table shown",
-  "Knockout bracket mentioned",
-  "Stoppage-time chance",
-  "Two quick corners",
-  "Player asks for a card",
-  "Cooling break or hydration talk",
-  "Tournament debut mentioned",
-  "Past World Cup referenced",
-  "VAR line graphic shown",
-  "Fans shown celebrating",
-  "Tactical foul",
-  "Goal checked for offside",
-  "Keeper catches a cross",
-  "Late defensive clearance",
-  "First shot on target",
-  "Manager shown shouting",
-  "National anthem clip",
-  "Player swaps boots"
-];
+type WorldCupPrompt = {
+  en: string;
+  no: string;
+};
 
-const dailyBoards = Array.from({ length: 100 }, (_, boardIndex) =>
+const worldCupPrompts = [
+  { en: "Goal from a set piece", no: "Mål etter dødball" },
+  { en: "VAR check changes a call", no: "VAR endrer avgjørelse" },
+  { en: "Penalty awarded", no: "Straffe dømmes" },
+  { en: "Penalty missed or saved", no: "Straffe misses eller reddes" },
+  { en: "Goal after 80 minutes", no: "Mål etter 80 minutter" },
+  { en: "Header from a cross", no: "Heading etter innlegg" },
+  { en: "Counter-attack goal", no: "Mål på kontring" },
+  { en: "Substitute scores", no: "Innbytter scorer" },
+  { en: "Captain gets an assist", no: "Kaptein får assist" },
+  { en: "Goalkeeper makes a big save", no: "Keeper gjør stor redning" },
+  { en: "Shot hits the post or bar", no: "Skudd i stolpe eller tverrligger" },
+  { en: "Yellow card for time wasting", no: "Gult kort for drøying" },
+  { en: "Free kick on target", no: "Frispark på mål" },
+  { en: "Corner leads to a chance", no: "Corner blir til sjanse" },
+  { en: "Offside goal ruled out", no: "Offsidemål annulleres" },
+  { en: "Underdog scores first", no: "Underdog scorer først" },
+  { en: "Favorite controls possession", no: "Favoritt styrer ballen" },
+  { en: "Extra time is mentioned", no: "Ekstraomganger nevnes" },
+  { en: "Player cramps late", no: "Spiller får krampe sent" },
+  { en: "Defender blocks a shot", no: "Forsvarer blokkerer skudd" },
+  { en: "Long-range shot", no: "Langskudd" },
+  { en: "Own goal scare", no: "Nesten selvmål" },
+  { en: "Teenager comes on", no: "Tenåring byttes inn" },
+  { en: "Coach changes formation", no: "Trener endrer formasjon" },
+  { en: "Crowd sings after a goal", no: "Publikum synger etter mål" },
+  { en: "Handball appeal", no: "Hands-rop" },
+  { en: "Keeper punches a cross", no: "Keeper bokser innlegg" },
+  { en: "Striker misses a sitter", no: "Spiss bommer på stor sjanse" },
+  { en: "Midfielder wins a duel", no: "Midtbanespiller vinner duell" },
+  { en: "Fullback overlaps", no: "Back kommer på overlap" },
+  { en: "Group table shown", no: "Gruppetabell vises" },
+  { en: "Knockout bracket mentioned", no: "Sluttspilltre nevnes" },
+  { en: "Stoppage-time chance", no: "Sjanse på overtid" },
+  { en: "Two quick corners", no: "To raske cornere" },
+  { en: "Player asks for a card", no: "Spiller ber om kort" },
+  { en: "Cooling break or hydration talk", no: "Drikkepause eller væskeprat" },
+  { en: "Tournament debut mentioned", no: "Turneringsdebut nevnes" },
+  { en: "Past World Cup referenced", no: "Tidligere VM nevnes" },
+  { en: "VAR line graphic shown", no: "VAR-linje vises" },
+  { en: "Fans shown celebrating", no: "Jublende fans vises" },
+  { en: "Tactical foul", no: "Taktisk frispark" },
+  { en: "Goal checked for offside", no: "Mål sjekkes for offside" },
+  { en: "Keeper catches a cross", no: "Keeper fanger innlegg" },
+  { en: "Late defensive clearance", no: "Sen defensiv klarering" },
+  { en: "First shot on target", no: "Første skudd på mål" },
+  { en: "Manager shown shouting", no: "Trener vises ropende" },
+  { en: "National anthem clip", no: "Klipp fra nasjonalsang" },
+  { en: "Player swaps boots", no: "Spiller bytter sko" }
+] satisfies WorldCupPrompt[];
+
+const dailyPromptBoards = Array.from({ length: 100 }, (_, boardIndex) =>
   Array.from({ length: 16 }, (__, squareIndex) => worldCupPrompts[(boardIndex * 7 + squareIndex * 5) % worldCupPrompts.length])
 );
 
 export function FootballBingoPage() {
   const { language } = useLanguage();
   const norwegian = language === "no";
-  const dailyBoard = useMemo(() => getDailyPuzzle(dailyBoards), []);
+  const dailyPromptBoard = useMemo(() => getDailyPuzzle(dailyPromptBoards), []);
+  const dailyBoard = useMemo(() => dailyPromptBoard.map((prompt) => (norwegian ? prompt.no : prompt.en)), [dailyPromptBoard, norwegian]);
   const storageKey = useMemo(() => getDailyStorageKey("tjt.world-cup-bingo.progress"), []);
   const [marked, setMarked] = useLocalStorage<string[]>(storageKey, []);
   const [customBoards, setCustomBoards] = useLocalStorage<CustomBoard[]>("tjt.world-cup-bingo.custom", []);
   const [selectedBoardId, setSelectedBoardId] = useState("daily");
   const [title, setTitle] = useState("");
-  const [customText, setCustomText] = useState("");
+  const [customPrompts, setCustomPrompts] = useState<string[]>(Array(16).fill(""));
   const selectedCustom = customBoards.find((board) => board.id === selectedBoardId);
   const board = selectedCustom?.prompts ?? dailyBoard;
+  const filledCustomPrompts = customPrompts.map((prompt) => prompt.trim()).filter(Boolean);
 
   function toggleSquare(square: string) {
     setMarked(marked.includes(square) ? marked.filter((item) => item !== square) : [...marked, square]);
   }
 
   function createCustomBoard() {
-    const prompts = customText
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean)
-      .slice(0, 16);
+    const prompts = customPrompts.map((prompt) => prompt.trim());
 
-    if (prompts.length !== 16) {
+    if (prompts.some((prompt) => !prompt)) {
       return;
     }
 
@@ -103,7 +106,7 @@ export function FootballBingoPage() {
     setSelectedBoardId(boardToSave.id);
     setMarked([]);
     setTitle("");
-    setCustomText("");
+    setCustomPrompts(Array(16).fill(""));
   }
 
   return (
@@ -177,23 +180,33 @@ export function FootballBingoPage() {
               placeholder={norwegian ? "Navn på brettet" : "Board name"}
               className="brand-control rounded border border-line px-4 py-3"
             />
-            <textarea
-              value={customText}
-              onChange={(event) => setCustomText(event.target.value)}
-              placeholder={
-                norwegian
-                  ? "Skriv 16 linjer, én hendelse per linje"
-                  : "Write 16 lines, one event per line"
-              }
-              className="brand-control min-h-48 rounded border border-line px-4 py-3"
-            />
+            <p className="brand-copy text-sm">
+              {norwegian
+                ? "Fyll inn alle 16 rutene. Du ser brettet mens du lager det."
+                : "Fill all 16 squares. You can see the board while creating it."}
+            </p>
+            <div className="grid grid-cols-4 gap-3">
+              {customPrompts.map((prompt, index) => (
+                <textarea
+                  key={index}
+                  value={prompt}
+                  onChange={(event) => {
+                    const nextPrompts = [...customPrompts];
+                    nextPrompts[index] = event.target.value;
+                    setCustomPrompts(nextPrompts);
+                  }}
+                  placeholder={`${index + 1}`}
+                  className="brand-control aspect-square resize-none rounded border border-line p-2 text-center text-xs font-semibold sm:text-sm"
+                />
+              ))}
+            </div>
             <button
               type="button"
               onClick={createCustomBoard}
-              disabled={customText.split("\n").filter((line) => line.trim()).length !== 16}
+              disabled={filledCustomPrompts.length !== 16}
               className="w-fit rounded bg-brand-blue px-5 py-3 text-sm font-semibold text-white shadow-glow disabled:opacity-50"
             >
-              {norwegian ? "Lagre lokalt" : "Save locally"}
+              {norwegian ? `Lagre lokalt (${filledCustomPrompts.length}/16)` : `Save locally (${filledCustomPrompts.length}/16)`}
             </button>
           </div>
         </details>

@@ -12,8 +12,8 @@ export function Games() {
       title={norwegian ? "Daglige spill." : "Daily games."}
       intro={
         norwegian
-          ? "Fem daglige spill med 100-dagers sykluser, lokale resultater og ingen innlogging."
-          : "Five daily games with 100-day cycles, local progress, and no sign-in."
+          ? "Daglige spill, ny hver dag."
+          : "Daily games, new every day."
       }
     >
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

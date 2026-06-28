@@ -2,25 +2,23 @@ import { useMemo, useRef, useState } from "react";
 import { Play } from "lucide-react";
 import { PageShell } from "../../components/PageShell";
 import { useLanguage } from "../../context/LanguageContext";
-import { normalizeMusicAnswer, songlessDays } from "../../data/musicGames";
+import { musicTracks, normalizeMusicAnswer, songlessDays } from "../../data/musicGames";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { getDailyPuzzle, getDailyStorageKey } from "../utilities/dailyPuzzle";
 import { fetchTrackPreview, type TrackPreview } from "./preview";
 
 type GuessResult = "wrong" | "artist" | "correct" | "skipped";
 
-const snippetDurations = [0.1, 0.5, 1, 2, 4, 8];
+const snippetDurations = [0.5, 1, 2, 4, 8, 12];
 
 export function SnippetGuessPage() {
   const { language } = useLanguage();
   const norwegian = language === "no";
   const track = useMemo(() => getDailyPuzzle(songlessDays), []);
   const storageKey = useMemo(() => getDailyStorageKey("tjt.snippet-guess.progress"), []);
-  const playedStorageKey = useMemo(() => getDailyStorageKey("tjt.snippet-guess.played"), []);
   const [results, setResults] = useLocalStorage<GuessResult[]>(storageKey, []);
   const [guess, setGuess] = useState("");
   const [preview, setPreview] = useState<TrackPreview | null>(null);
-  const [played, setPlayed] = useLocalStorage<boolean[]>(playedStorageKey, Array(snippetDurations.length).fill(false));
   const [playing, setPlaying] = useState(false);
   const [message, setMessage] = useState(norwegian ? "Spill dagens første klipp." : "Play today's first clip.");
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -28,7 +26,7 @@ export function SnippetGuessPage() {
   const finished = results.includes("correct") || results.length >= snippetDurations.length;
 
   async function playSnippet() {
-    if (played[attempt] || finished || playing) {
+    if (finished || playing) {
       return;
     }
 
@@ -41,8 +39,8 @@ export function SnippetGuessPage() {
     }
 
     const audio = new Audio(nextPreview.previewUrl);
+    audioRef.current?.pause();
     audioRef.current = audio;
-    setPlayed((current) => current.map((value, index) => (index === attempt ? true : value)));
     setPlaying(true);
     audio.currentTime = 0;
     await audio.play();
@@ -97,8 +95,8 @@ export function SnippetGuessPage() {
       title={norwegian ? "Låtklipp" : "Snippet Guess"}
       intro={
         norwegian
-          ? "Hør et kort klipp og gjett låten. Hvert klipp kan bare spilles én gang."
-          : "Hear a short clip and guess the song. Each clip can only be played once."
+          ? "Hør et kort klipp og gjett låten. Du kan spille samme klipp flere ganger."
+          : "Hear a short clip and guess the song. You can replay the current clip."
       }
     >
       <div className="mx-auto max-w-3xl">
@@ -106,8 +104,8 @@ export function SnippetGuessPage() {
           <summary className="cursor-pointer font-semibold">{norwegian ? "Slik spiller du" : "How it works"}</summary>
           <p className="brand-copy mt-3 leading-7">
             {norwegian
-              ? "Trykk play for dagens klipp, skriv låttittel, og send inn. Feil svar låser opp litt lengre klipp. Grønn er riktig, gul er riktig artist, rød er feil."
-              : "Press play for today's clip, type the song title, and submit. Wrong answers unlock slightly longer clips. Green is correct, yellow is right artist, red is wrong."}
+              ? "Trykk play for dagens klipp, velg eller skriv låttittel, og send inn. Feil svar låser opp lengre klipp. Grønn er riktig, gul er riktig artist, rød er feil."
+              : "Press play for today's clip, choose or type the song title, and submit. Wrong answers unlock longer clips. Green is correct, yellow is right artist, red is wrong."}
           </p>
         </details>
 
@@ -137,16 +135,16 @@ export function SnippetGuessPage() {
           <button
             type="button"
             onClick={playSnippet}
-            disabled={played[attempt] || finished || playing}
+            disabled={finished || playing}
             className="grid h-20 w-20 place-items-center rounded-full bg-brand-green text-white shadow-glow disabled:opacity-50"
           >
             <Play size={34} />
           </button>
           <p className="brand-copy text-sm">
-            {played[attempt]
+            {playing
               ? norwegian
-                ? "Dette klippet er brukt."
-                : "This clip has been used."
+                ? "Spiller klipp."
+                : "Playing clip."
               : `${snippetDurations[attempt]} seconds`}
           </p>
         </div>
@@ -156,9 +154,15 @@ export function SnippetGuessPage() {
             value={guess}
             onChange={(event) => setGuess(event.target.value)}
             disabled={finished}
+            list="song-options"
             placeholder={norwegian ? "Skriv låttittel" : "Type song title"}
             className="brand-control min-w-0 flex-1 rounded border border-line px-4 py-3"
           />
+          <datalist id="song-options">
+            {musicTracks.map((trackOption) => (
+              <option key={`${trackOption.artist}-${trackOption.title}`} value={`${trackOption.title} - ${trackOption.artist}`} />
+            ))}
+          </datalist>
           <button
             type="button"
             onClick={submitGuess}

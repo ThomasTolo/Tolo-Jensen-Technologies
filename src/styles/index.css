@@ -119,4 +119,48 @@ input {
     background: var(--control-bg);
     color: var(--control-fg);
   }
+
+  .kollekt-phone-frame {
+    display: grid;
+    place-items: center;
+    min-height: 28rem;
+    overflow: hidden;
+    border: 1px solid var(--panel-border);
+    border-radius: 0.5rem;
+    background: rgba(2, 6, 12, 0.36);
+  }
+
+  .kollekt-phone-frame img {
+    width: min(100%, 21rem);
+    max-height: 42rem;
+    object-fit: contain;
+  }
+
+  .kollekt-feature .kollekt-phone-frame {
+    min-height: 34rem;
+  }
+
+  .kollekt-feature .kollekt-phone-frame img {
+    width: min(100%, 28rem);
+  }
+
+  .kollekt-screen-card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  @media (max-width: 640px) {
+    .kollekt-phone-frame {
+      min-height: 22rem;
+    }
+
+    .kollekt-phone-frame img {
+      width: min(100%, 17rem);
+      max-height: 34rem;
+    }
+
+    .kollekt-feature .kollekt-phone-frame {
+      min-height: 24rem;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "../../components/PageShell";
 import { useLanguage } from "../../context/LanguageContext";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -6,19 +6,18 @@ import { getDailyStorageKey } from "../utilities/dailyPuzzle";
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
-const ROWS = 5;
-const COLS = 4;
-const SHELF_SIZE = 3;   // items visible per side shelf
-const MATCH_LEN  = 3;
-const TIMER_SECONDS = 5 * 60;
+const ROWS      = 5;
+const COLS      = 6;
+const TRAY_SIZE = 7;
+const TIMER_SEC = 5 * 60;
 
 const THEMES = [
-  { name: "Fruit",    noName: "Frukt",   items: ["🍎","🍊","🍋","🍇","🍓","🍑"] },
-  { name: "Animals",  noName: "Dyr",     items: ["🐶","🐱","🐸","🦊","🐻","🐼"] },
-  { name: "Travel",   noName: "Reise",   items: ["✈️","🚂","🚗","🚀","🛸","⛵"] },
-  { name: "Nature",   noName: "Natur",   items: ["⭐","🌙","🌻","🍁","🌈","❄️"] },
-  { name: "Ocean",    noName: "Hav",     items: ["🐠","🐙","🦈","🐋","🦀","🐡"] },
-  { name: "Music",    noName: "Musikk",  items: ["🎵","🎸","🎹","🎺","🎻","🥁"] },
+  { name: "Fruit",   noName: "Frukt",   items: ["🍎","🍊","🍋","🍇","🍓","🍑","🍒","🫐","🍈","🍍"] },
+  { name: "Animals", noName: "Dyr",     items: ["🐶","🐱","🐸","🦊","🐻","🐼","🐨","🦁","🐯","🦝"] },
+  { name: "Travel",  noName: "Reise",   items: ["✈️","🚂","🚗","🚀","🛸","⛵","🚁","🏎️","🛻","🚢"] },
+  { name: "Nature",  noName: "Natur",   items: ["⭐","🌙","🌻","🍁","🌈","❄️","🌊","⚡","🌺","🍄"] },
+  { name: "Ocean",   noName: "Hav",     items: ["🐠","🐙","🦈","🐋","🦀","🐚","🐡","🦑","🦞","🐬"] },
+  { name: "Food",    noName: "Mat",     items: ["🍕","🍔","🌮","🍜","🍣","🍩","🧁","🍦","🥐","🍫"] },
 ];
 
 const DAILY_SEEDS = [
@@ -40,14 +39,6 @@ type Item  = string | null;
 type Theme = typeof THEMES[number];
 type Mode  = "daily" | "free";
 
-// Each side shelf: 3 fixed slots + a refill counter (max 1 refill, then empties)
-type ShelfState = { items: Item[]; refillsUsed: number };
-
-type Sel =
-  | { from: "left";   item: string; slotIdx: number }
-  | { from: "right";  item: string; slotIdx: number }
-  | { from: "center"; item: string; row: number; col: number };
-
 // ── RNG ────────────────────────────────────────────────────────────────────────
 
 function makeRng(seed: number) {
@@ -65,32 +56,6 @@ function makeRng(seed: number) {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-/** Generate a batch of SHELF_SIZE items that are NOT all the same type. */
-function makeBatch(theme: Theme, seed: number): string[] {
-  const rng = makeRng(seed);
-  const pool = rng.shuffle([...theme.items, ...theme.items]);
-  const picks = pool.slice(0, SHELF_SIZE);
-  // Ensure not all identical (would be trivially matchable from the shelf alone)
-  if (picks.every(p => p === picks[0])) {
-    const others = theme.items.filter(i => i !== picks[0]);
-    if (others.length > 0) picks[SHELF_SIZE - 1] = others[rng.int(0, others.length - 1)];
-  }
-  return picks;
-}
-
-/**
- * Advance a side shelf after a center match:
- *   - 0 refills used → refill with a new batch (refillsUsed becomes 1)
- *   - 1 refill used  → empty the shelf       (refillsUsed becomes 2)
- *   - already empty  → no change
- */
-function advanceShelf(shelf: ShelfState, theme: Theme, seed: number): ShelfState {
-  if (shelf.refillsUsed === 0) {
-    return { items: makeBatch(theme, seed), refillsUsed: 1 };
-  }
-  return { items: Array(SHELF_SIZE).fill(null), refillsUsed: 2 };
-}
-
 function getDailySeed(): number {
   const today = new Date();
   const start = new Date(today.getFullYear(), 0, 1);
@@ -101,48 +66,26 @@ function fmt(s: number) {
   return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 }
 
-// ── Match detection ────────────────────────────────────────────────────────────
-
-function findMatches(grid: Item[][]): Set<string> {
-  const out = new Set<string>();
-  for (let r = 0; r < ROWS; r++) {
-    let s = 0;
-    while (s < COLS) {
-      const item = grid[r][s];
-      if (!item) { s++; continue; }
-      let e = s + 1;
-      while (e < COLS && grid[r][e] === item) e++;
-      if (e - s >= MATCH_LEN) for (let c = s; c < e; c++) out.add(`${r},${c}`);
-      s = e;
-    }
-  }
-  return out;
-}
-
 // ── Game generation ────────────────────────────────────────────────────────────
 
-type GameData = { grid: Item[][]; leftShelf: ShelfState; rightShelf: ShelfState; theme: Theme };
+type GameData = { grid: Item[][]; theme: Theme };
 
 function buildGame(seed: number): GameData {
   const rng = makeRng(seed);
-  const theme  = THEMES[rng.int(0, THEMES.length - 1)];
-  const numTypes = rng.int(4, theme.items.length);
-  const types  = rng.shuffle([...theme.items]).slice(0, numTypes);
+  const theme = THEMES[rng.int(0, THEMES.length - 1)];
 
-  // Center: 1–2 copies of each type (never 3, so no immediate match)
-  const centerItems = rng.shuffle(types.flatMap(t => Array(rng.int(1, 2)).fill(t)));
-  const positions   = rng.shuffle(Array.from({ length: ROWS * COLS }, (_, i) => i));
-  const grid: Item[][] = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
-  centerItems.forEach((item, i) => {
-    const pos = positions[i];
-    grid[Math.floor(pos / COLS)][pos % COLS] = item;
-  });
+  // Fill grid: ROWS×COLS cells all occupied, items in multiples of 3
+  const totalCells = ROWS * COLS; // 30
+  const numTypes   = totalCells / 3;  // 10 types × 3 = 30
+  const types = rng.shuffle([...theme.items]).slice(0, numTypes);
+  const pool  = rng.shuffle(types.flatMap(t => [t, t, t]));
 
-  // Side shelves: initial batch of SHELF_SIZE items each, refillsUsed = 0
-  const leftShelf:  ShelfState = { items: makeBatch(theme, seed + 1), refillsUsed: 0 };
-  const rightShelf: ShelfState = { items: makeBatch(theme, seed + 2), refillsUsed: 0 };
+  const grid: Item[][] = [];
+  for (let r = 0; r < ROWS; r++) {
+    grid.push(pool.slice(r * COLS, (r + 1) * COLS));
+  }
 
-  return { grid, leftShelf, rightShelf, theme };
+  return { grid, theme };
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -154,138 +97,159 @@ export function ShelfSortPage() {
   const [mode,     setMode]     = useState<Mode>("daily");
   const [freeSeed, setFreeSeed] = useState(() => Math.floor(Math.random() * 1e6));
   const dailySeed  = useMemo(getDailySeed, []);
-  const bestKey    = useMemo(() => getDailyStorageKey("tjt.ryddig2.best"), []);
+  const bestKey    = useMemo(() => getDailyStorageKey("tjt.ryddig3.best"), []);
   const [dailyBest, setDailyBest] = useLocalStorage(bestKey, 0);
 
   const seed = mode === "daily" ? dailySeed : freeSeed;
   const init = useMemo(() => buildGame(seed), [seed]);
 
-  const [grid,       setGrid]       = useState<Item[][]>(init.grid);
-  const [leftShelf,  setLeftShelf]  = useState<ShelfState>(init.leftShelf);
-  const [rightShelf, setRightShelf] = useState<ShelfState>(init.rightShelf);
-  const [theme,      setTheme]      = useState<Theme>(init.theme);
-  const [sel,        setSel]        = useState<Sel | null>(null);
-  const [clearing,   setClearing]   = useState<Set<string>>(new Set());
-  const [score,      setScore]      = useState(0);
-  const [matchCnt,   setMatchCnt]   = useState(0);
-  const [running,    setRunning]    = useState(false);
-  const [lost,       setLost]       = useState(false);
-  const [timeLeft,   setTimeLeft]   = useState(TIMER_SECONDS);
+  const [grid,     setGrid]     = useState<Item[][]>(init.grid);
+  const [theme,    setTheme]    = useState<Theme>(init.theme);
+  const [tray,     setTray]     = useState<Item[]>(Array(TRAY_SIZE).fill(null));
+  // indices in the tray being cleared (animation)
+  const [clearing, setClearing] = useState<Set<number>>(new Set());
+  const [score,    setScore]    = useState(0);
+  const [matchCnt, setMatchCnt] = useState(0);
+  const [running,  setRunning]  = useState(false);
+  const [won,      setWon]      = useState(false);
+  const [lost,     setLost]     = useState(false);
+  const [timeLeft, setTimeLeft] = useState(TIMER_SEC);
+  const [dragSrc,  setDragSrc]  = useState<{ row: number; col: number } | null>(null);
+  const [dragTgt,  setDragTgt]  = useState<{ row: number; col: number } | null>(null);
 
-  // Keep a ref so the clearing timeout can read the latest matchCnt without stale closure
-  const matchCntRef = useRef(0);
-  useEffect(() => { matchCntRef.current = matchCnt; }, [matchCnt]);
-
-  // Reset when seed changes
+  // Reset on seed change
   useEffect(() => {
     const g = buildGame(seed);
-    setGrid(g.grid); setLeftShelf(g.leftShelf); setRightShelf(g.rightShelf); setTheme(g.theme);
-    setSel(null); setClearing(new Set()); setScore(0); setMatchCnt(0);
-    setRunning(false); setLost(false); setTimeLeft(TIMER_SECONDS);
+    setGrid(g.grid); setTheme(g.theme);
+    setTray(Array(TRAY_SIZE).fill(null));
+    setClearing(new Set()); setScore(0); setMatchCnt(0);
+    setRunning(false); setWon(false); setLost(false); setTimeLeft(TIMER_SEC);
   }, [seed]);
 
   // Countdown
   useEffect(() => {
-    if (!running || lost) return;
+    if (!running || won || lost) return;
     if (timeLeft <= 0) { setLost(true); setRunning(false); return; }
     const t = setInterval(() => setTimeLeft(s => s - 1), 1000);
     return () => clearInterval(t);
-  }, [running, lost, timeLeft]);
+  }, [running, won, lost, timeLeft]);
 
-  // After 500 ms animation: remove cleared cells and advance both shelves
+  // Execute clear after 500 ms animation
   useEffect(() => {
     if (clearing.size === 0) return;
     const t = setTimeout(() => {
-      const n = clearing.size / MATCH_LEN;
-      const newCnt = matchCntRef.current + n;
+      const n = clearing.size / 3;
+      // Remove cleared items and compact
+      const remaining = tray.filter((_, i) => !clearing.has(i));
+      const newTray: Item[] = [...remaining, ...Array(TRAY_SIZE - remaining.length).fill(null)];
+      const newScore   = score + n * 200;
+      const newMatchCnt = matchCnt + n;
 
-      setGrid(prev => prev.map((row, r) => row.map((c, col) => clearing.has(`${r},${col}`) ? null : c)));
-      setScore(prev => prev + Math.round(n * 150));
-      setMatchCnt(newCnt);
-
-      // Each centre match advances BOTH side shelves by one stage
-      const batchSeed = Date.now();
-      setLeftShelf(prev  => advanceShelf(prev,  theme, batchSeed));
-      setRightShelf(prev => advanceShelf(prev,  theme, batchSeed + 1));
-
+      setTray(newTray);
+      setScore(newScore);
+      setMatchCnt(newMatchCnt);
       setClearing(new Set());
-    }, 500);
+
+      if (mode === "daily" && newScore > dailyBest) setDailyBest(newScore);
+
+      // Check win: grid fully empty and tray fully empty
+      if (grid.every(row => row.every(c => c === null)) && newTray.every(c => c === null)) {
+        setWon(true); setRunning(false);
+      }
+    }, 480);
     return () => clearTimeout(t);
-  }, [clearing, theme]);
+  }, [clearing, tray, grid, score, matchCnt, mode, dailyBest, setDailyBest]);
 
-  // Detect matches whenever the grid settles (and we are not mid-animation)
-  useEffect(() => {
-    if (!running || lost || clearing.size > 0) return;
-    const m = findMatches(grid);
-    if (m.size > 0) setClearing(m);
-  }, [grid, clearing, running, lost]);
+  // ── Tap a grid item ──────────────────────────────────────────────────────
 
-  // Save daily best
-  useEffect(() => {
-    if (mode === "daily" && score > dailyBest) setDailyBest(score);
-  }, [score, mode, dailyBest, setDailyBest]);
-
-  // ── Interaction ────────────────────────────────────────────────────────────
-
-  function pickShelf(side: "left" | "right", slotIdx: number) {
-    if (!running || lost || clearing.size > 0) return;
-    const shelf = side === "left" ? leftShelf : rightShelf;
-    const item  = shelf.items[slotIdx];
+  function tapItem(row: number, col: number) {
+    if (!running || won || lost || clearing.size > 0) return;
+    const item = grid[row][col];
     if (!item) return;
-    // Toggle deselect for same slot
-    if (sel?.from === side && (sel as { slotIdx: number }).slotIdx === slotIdx) {
-      setSel(null); return;
-    }
-    setSel({ from: side, item, slotIdx });
-  }
 
-  function clickCenter(row: number, col: number) {
-    if (!running || lost || clearing.size > 0) return;
-    const cell = grid[row][col];
+    // Find first empty tray slot
+    const slot = tray.findIndex(t => t === null);
+    if (slot === -1) return; // tray full, can't pick
 
-    if (!sel) {
-      if (cell) setSel({ from: "center", item: cell, row, col });
-      return;
-    }
-
-    // Deselect same center cell
-    if (sel.from === "center" && sel.row === row && sel.col === col) {
-      setSel(null); return;
-    }
-
+    // Move item to tray
     const newGrid = grid.map(r => [...r]);
+    newGrid[row][col] = null;
 
-    if (sel.from === "left" || sel.from === "right") {
-      if (cell) {
-        // Target occupied → switch selection to that centre cell instead
-        setSel({ from: "center", item: cell, row, col });
-        return;
-      }
-      // Place shelf item into empty cell, clear its slot
-      newGrid[row][col] = sel.item;
-      const si = sel.slotIdx;
-      if (sel.from === "left") {
-        setLeftShelf(prev => { const it = [...prev.items]; it[si] = null; return { ...prev, items: it }; });
-      } else {
-        setRightShelf(prev => { const it = [...prev.items]; it[si] = null; return { ...prev, items: it }; });
-      }
-    } else {
-      // Swap two centre cells
-      newGrid[row][col]         = sel.item;
-      newGrid[sel.row][sel.col] = cell;
+    const newTray = [...tray];
+    newTray[slot] = item;
+
+    // Sort tray so matching items group together (by emoji codepoint)
+    const filled = newTray.filter((x): x is string => x !== null).sort();
+    const sorted: Item[] = [...filled, ...Array(TRAY_SIZE - filled.length).fill(null)];
+
+    // Check for 3-match
+    const counts: Record<string, number[]> = {};
+    sorted.forEach((x, i) => {
+      if (x) { if (!counts[x]) counts[x] = []; counts[x].push(i); }
+    });
+
+    let newClearing = new Set<number>();
+    for (const [, idxs] of Object.entries(counts)) {
+      if (idxs.length >= 3) idxs.slice(0, 3).forEach(i => newClearing.add(i));
     }
 
     setGrid(newGrid);
-    setSel(null);
+    setTray(sorted);
+
+    if (newClearing.size > 0) {
+      setClearing(newClearing);
+    } else {
+      // Check lose: tray full and no 3-match possible
+      if (sorted.every(x => x !== null)) {
+        setLost(true); setRunning(false);
+      }
+      // Check win
+      if (newGrid.every(r => r.every(c => c === null)) && sorted.every(c => c === null)) {
+        setWon(true); setRunning(false);
+      }
+    }
   }
+
+  // ── Drag handlers ────────────────────────────────────────────────────────
+
+  function onDragStart(e: React.DragEvent, row: number, col: number) {
+    if (!running || won || lost || busy || !grid[row][col]) { e.preventDefault(); return; }
+    setDragSrc({ row, col });
+    e.dataTransfer.effectAllowed = "move";
+  }
+
+  function onDragOver(e: React.DragEvent, row: number, col: number) {
+    if (!dragSrc) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragTgt({ row, col });
+  }
+
+  function onDragLeave() { setDragTgt(null); }
+
+  function onDrop(e: React.DragEvent, row: number, col: number) {
+    e.preventDefault();
+    if (!dragSrc || (dragSrc.row === row && dragSrc.col === col)) {
+      setDragSrc(null); setDragTgt(null); return;
+    }
+    const newGrid = grid.map(r => [...r]);
+    // Swap the two cells (works even if target is empty)
+    [newGrid[row][col], newGrid[dragSrc.row][dragSrc.col]] =
+      [newGrid[dragSrc.row][dragSrc.col], newGrid[row][col]];
+    setGrid(newGrid);
+    setDragSrc(null); setDragTgt(null);
+  }
+
+  function onDragEnd() { setDragSrc(null); setDragTgt(null); }
 
   function newGame(nextMode: Mode = mode) {
     if (nextMode === "free") setFreeSeed(Math.floor(Math.random() * 1e6));
     setMode(nextMode);
   }
 
-  const busy      = clearing.size > 0;
   const itemsLeft = grid.flat().filter(Boolean).length;
+  const trayUsed  = tray.filter(Boolean).length;
+  const busy      = clearing.size > 0;
 
   // ── JSX ───────────────────────────────────────────────────────────────────
 
@@ -295,16 +259,16 @@ export function ShelfSortPage() {
       title={no ? "Ryddig" : "Tidyup"}
       intro={
         no
-          ? `Plasser gjenstander fra sidehyllene i midten og match 3 like i en rad. Tema: ${theme.noName}`
-          : `Place items from the side shelves into the middle and match 3 in a row. Theme: ${theme.name}`
+          ? `Trykk på gjenstander for å plukke dem opp. Samle 3 like i brettet nedenfor for å rydde dem. Tema: ${theme.noName}`
+          : `Tap items to pick them up. Collect 3 identical in the tray below to clear them. Theme: ${theme.name}`
       }
     >
-      <div className="grid gap-6 lg:grid-cols-[1fr_19rem]">
+      <div className="grid gap-6 lg:grid-cols-[1fr_18rem]">
 
         {/* ── Board ─────────────────────────────────────────────────── */}
-        <section className="brand-panel rounded-lg p-4 sm:p-5">
-          {/* Header strip */}
-          <div className="mb-4 flex items-center justify-between text-sm font-medium">
+        <section className="flex flex-col gap-4">
+          {/* Header */}
+          <div className="flex items-center justify-between rounded-lg border border-line bg-slate-900/60 px-4 py-2 text-sm font-medium">
             <span className={timeLeft < 60 ? "font-bold text-red-400" : "brand-copy"}>
               ⏱ {fmt(timeLeft)}
             </span>
@@ -316,77 +280,93 @@ export function ShelfSortPage() {
             </span>
           </div>
 
-          {/* Left shelf | Centre grid | Right shelf */}
-          <div className="flex items-start justify-center gap-2 sm:gap-3">
-
-            <SideShelf
-              shelf={leftShelf}
-              side="left"
-              selSlot={sel?.from === "left" ? (sel as { slotIdx: number }).slotIdx : null}
-              disabled={!running || lost || busy}
-              onPick={(i) => pickShelf("left", i)}
-              no={no}
-            />
-
-            {/* Centre grid */}
-            <div
-              className="grid flex-1 gap-1 sm:gap-1.5"
-              style={{ gridTemplateColumns: `repeat(${COLS}, minmax(0,1fr))`, maxWidth: `${COLS * 68}px` }}
-            >
-              {grid.map((row, r) =>
-                row.map((cell, c) => {
-                  const key    = `${r},${c}`;
-                  const isClr  = clearing.has(key);
-                  const isSel  = sel?.from === "center" && sel.row === r && sel.col === c;
-                  const canDrop = sel !== null && !isSel && !cell;
-
+          {/* Shelf grid */}
+          <div className="overflow-hidden rounded-xl border border-amber-900/40 bg-[#1a1008]">
+            {grid.map((row, r) => (
+              <div
+                key={r}
+                className="grid"
+                style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}
+              >
+                {row.map((cell, c) => {
+                  const isSrc = dragSrc?.row === r && dragSrc?.col === c;
+                  const isTgt = dragTgt?.row === r && dragTgt?.col === c;
+                  const canAct = running && !won && !lost && !busy;
                   return (
                     <button
-                      key={key}
+                      key={c}
                       type="button"
-                      onClick={() => clickCenter(r, c)}
-                      disabled={!running || lost}
+                      draggable={!!cell && canAct}
+                      onClick={() => tapItem(r, c)}
+                      onDragStart={e => onDragStart(e, r, c)}
+                      onDragOver={e => onDragOver(e, r, c)}
+                      onDragLeave={onDragLeave}
+                      onDrop={e => onDrop(e, r, c)}
+                      onDragEnd={onDragEnd}
+                      disabled={!canAct}
                       className={[
-                        "relative flex aspect-square select-none items-center justify-center rounded-lg text-2xl transition-all duration-150",
-                        isClr  ? "scale-125 opacity-0 !duration-500" : "",
-                        isSel  ? "border-2 border-brand-blue bg-brand-blue/25 scale-110 shadow-glow" : "",
-                        !isClr && !isSel && cell
-                          ? "brand-panel border border-brand-blue/25 cursor-pointer hover:border-brand-blue hover:scale-105 active:scale-95"
-                          : "",
-                        !cell && canDrop
-                          ? "border-2 border-dashed border-brand-blue/50 bg-brand-blue/5 cursor-pointer"
-                          : "",
-                        !cell && !canDrop && !isClr
-                          ? "border border-white/5 cursor-default"
-                          : "",
+                        "group relative flex aspect-square select-none items-center justify-center",
+                        "border-b-[3px] border-r border-amber-900/30 border-b-amber-800/60",
+                        "text-3xl transition-all duration-100",
+                        c === COLS - 1 ? "border-r-0" : "",
+                        isSrc ? "opacity-40 scale-95" : "",
+                        isTgt ? "ring-2 ring-inset ring-brand-blue bg-brand-blue/15" : "",
+                        cell && canAct && !isSrc && !isTgt
+                          ? "cursor-grab hover:bg-amber-600/15 hover:scale-105 active:cursor-grabbing active:scale-95"
+                          : "cursor-default",
+                        !cell ? "bg-[#120c04]/40" : "bg-[#1e1309]/60",
                       ].join(" ")}
                     >
-                      {cell}
+                      <span className={cell ? "drop-shadow-sm pointer-events-none" : "opacity-0"}>
+                        {cell ?? "·"}
+                      </span>
+                      <span className="pointer-events-none absolute bottom-0 left-0 right-0 h-1 bg-amber-950/40" />
                     </button>
                   );
-                })
-              )}
-            </div>
-
-            <SideShelf
-              shelf={rightShelf}
-              side="right"
-              selSlot={sel?.from === "right" ? (sel as { slotIdx: number }).slotIdx : null}
-              disabled={!running || lost || busy}
-              onPick={(i) => pickShelf("right", i)}
-              no={no}
-            />
+                })}
+              </div>
+            ))}
           </div>
 
-          {/* Hint / status */}
-          <div className="mt-4 min-h-[1.4rem] text-center text-xs font-medium brand-copy">
-            {sel && !lost && (
-              sel.from === "center"
-                ? (no ? "Klikk et annet felt for å flytte eller bytte." : "Click another cell to move or swap.")
-                : (no ? `${sel.item} valgt — klikk en tom rute i midten.` : `${sel.item} selected — click an empty centre cell.`)
+          {/* Holding tray */}
+          <div className="rounded-xl border border-line bg-slate-900/70 p-3">
+            <p className="mb-2 text-center text-xs font-semibold uppercase tracking-widest brand-copy">
+              {no ? "Brett" : "Tray"} — {trayUsed}/{TRAY_SIZE}
+            </p>
+            <div className="flex gap-1.5">
+              {tray.map((item, i) => {
+                const isClearing = clearing.has(i);
+                return (
+                  <div
+                    key={i}
+                    className={[
+                      "flex flex-1 aspect-square items-center justify-center rounded-lg text-2xl transition-all duration-200",
+                      isClearing  ? "scale-125 opacity-0 !duration-[480ms]" : "",
+                      item && !isClearing
+                        ? "border-2 border-brand-blue/40 bg-brand-blue/10 shadow-sm"
+                        : "border border-white/8 bg-transparent",
+                    ].join(" ")}
+                  >
+                    {item}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Status */}
+          <div className="min-h-5 text-center text-sm">
+            {won  && <p className="font-semibold text-green-400">🎉 {no ? "Alt ryddet – bra jobbet!" : "All cleared – well done!"}</p>}
+            {lost && (
+              <p className="font-semibold text-red-400">
+                {timeLeft <= 0
+                  ? (no ? "Tiden er ute!" : "Time's up!")
+                  : (no ? "Brettet er fullt – prøv igjen!" : "Tray is full – try again!")}
+              </p>
             )}
-            {lost  && <span className="text-red-400 font-semibold">{no ? "Tiden er ute!" : "Time's up!"}</span>}
-            {!running && !lost && !sel && <span>{no ? "Trykk Start for å begynne." : "Press Start to begin."}</span>}
+            {!running && !won && !lost && (
+              <p className="brand-copy text-xs">{no ? "Trykk Start for å begynne." : "Press Start to begin."}</p>
+            )}
           </div>
         </section>
 
@@ -415,12 +395,20 @@ export function ShelfSortPage() {
               }
             </div>
             <div className="mt-4">
-              {!running && !lost ? (
-                <button type="button" onClick={() => setRunning(true)} className="w-full rounded bg-brand-blue px-4 py-3 text-sm font-semibold text-white shadow-glow">
+              {!running && !won && !lost ? (
+                <button
+                  type="button"
+                  onClick={() => setRunning(true)}
+                  className="w-full rounded bg-brand-blue px-4 py-3 text-sm font-semibold text-white shadow-glow"
+                >
                   {no ? "Start" : "Start"}
                 </button>
               ) : (
-                <button type="button" onClick={() => newGame()} className="w-full brand-control rounded border border-line px-4 py-3 text-sm font-semibold">
+                <button
+                  type="button"
+                  onClick={() => newGame()}
+                  className="w-full brand-control rounded border border-line px-4 py-3 text-sm font-semibold"
+                >
                   {no ? "Ny runde" : "New game"}
                 </button>
               )}
@@ -430,64 +418,15 @@ export function ShelfSortPage() {
           <section className="brand-panel rounded-lg p-5">
             <h2 className="font-semibold">{no ? "Slik spiller du" : "How to play"}</h2>
             <ul className="mt-3 space-y-2 text-sm brand-copy leading-6">
-              <li>👈 {no ? "Klikk én av de 3 gjenstander i sidehyllen for å velge den." : "Click any of the 3 side-shelf items to select it."}</li>
-              <li>📥 {no ? "Klikk en tom rute i midten for å plassere den der." : "Click an empty centre cell to place it."}</li>
-              <li>↔️ {no ? "Klikk en gjenstand i midten for å bytte plass med en annen." : "Click a centre item to swap it with another."}</li>
-              <li>✨ {no ? "3 like ved siden av hverandre i en rad ryddes automatisk og gir 150 poeng." : "3 identical adjacent in a row auto-clear for 150 points."}</li>
-              <li>🔄 {no ? "Etter første match: hyllen får 3 nye gjenstander. Etter andre match: hyllen tømmes." : "After 1st match: shelf refills with 3 new items. After 2nd: shelf empties."}</li>
+              <li>👆 {no ? "Trykk på en gjenstand for å plukke den opp i brettet." : "Tap an item to pick it up into the tray."}</li>
+              <li>🎯 {no ? "3 like gjenstander i brettet ryddes automatisk og gir 200 poeng." : "3 identical items in the tray auto-clear for 200 points."}</li>
+              <li>⚠️ {no ? "Brettet har 7 plasser — la det ikke fylles helt opp!" : "The tray holds 7 items — don't let it fill up completely!"}</li>
+              <li>🏆 {no ? "Rydd alle gjenstander fra hyllene for å vinne." : "Clear all items from the shelves to win."}</li>
             </ul>
           </section>
         </aside>
       </div>
     </PageShell>
-  );
-}
-
-// ── SideShelf ─────────────────────────────────────────────────────────────────
-
-function SideShelf({ shelf, side, selSlot, disabled, onPick, no }: {
-  shelf: ShelfState;
-  side: "left" | "right";
-  selSlot: number | null;
-  disabled: boolean;
-  onPick: (slotIdx: number) => void;
-  no: boolean;
-}) {
-  const isEmpty = shelf.items.every(i => i === null);
-
-  return (
-    <div className="flex w-12 flex-col items-center gap-1.5 sm:w-14">
-      <p className="mb-0.5 text-xs font-bold text-brand-blue">{side === "left" ? "◀" : "▶"}</p>
-
-      {Array.from({ length: SHELF_SIZE }).map((_, i) => {
-        const item   = shelf.items[i];
-        const isSel  = selSlot === i;
-        return (
-          <button
-            key={i}
-            type="button"
-            onClick={() => item && onPick(i)}
-            disabled={!item || disabled}
-            className={[
-              "flex h-11 w-11 select-none items-center justify-center rounded-lg text-xl transition-all duration-150 sm:h-12 sm:w-12 sm:text-2xl",
-              item
-                ? isSel
-                  ? "border-2 border-brand-blue bg-brand-blue/20 scale-110 shadow-glow cursor-pointer"
-                  : "brand-panel border border-brand-blue/30 cursor-pointer hover:border-brand-blue hover:scale-105 active:scale-95"
-                : "border border-white/8 bg-transparent cursor-default",
-            ].join(" ")}
-          >
-            {item}
-          </button>
-        );
-      })}
-
-      {isEmpty && shelf.refillsUsed >= 2 && (
-        <p className="mt-1 text-center text-xs brand-copy leading-4">
-          {no ? "Tom" : "Empty"}
-        </p>
-      )}
-    </div>
   );
 }
 

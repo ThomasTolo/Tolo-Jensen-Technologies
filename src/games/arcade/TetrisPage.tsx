@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, ChevronsDown, Pause, Play, RotateCw } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Pause, Play } from "lucide-react";
 import { PageShell } from "../../components/PageShell";
 import { useLanguage } from "../../context/LanguageContext";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -299,11 +299,11 @@ export function TetrisPage() {
             <h2 className="text-lg font-semibold">{norwegian ? "Kontroller" : "Controls"}</h2>
             <div className="mt-4 grid grid-cols-3 gap-2">
               <ControlButton label={<ArrowLeft size={18} />} onClick={() => moveActive(0, -1)} disabled={!running} />
-              <ControlButton label={<RotateCw size={18} />} onClick={rotateActive} disabled={!running} />
+              <ControlButton label={<ArrowUp size={18} />} onClick={rotateActive} disabled={!running} />
               <ControlButton label={<ArrowRight size={18} />} onClick={() => moveActive(0, 1)} disabled={!running} />
               <div />
               <ControlButton label={<ArrowDown size={18} />} onClick={softDrop} disabled={!running} />
-              <ControlButton label={<ChevronsDown size={18} />} onClick={hardDrop} disabled={!running} />
+              <ControlButton label={<span className="text-xs font-semibold tracking-wide">Space</span>} onClick={hardDrop} disabled={!running} />
             </div>
           </section>
         </aside>

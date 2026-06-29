@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play, RotateCw } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowRight, ChevronsDown, Pause, Play, RotateCw } from "lucide-react";
 import { PageShell } from "../../components/PageShell";
 import { useLanguage } from "../../context/LanguageContext";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -27,6 +27,15 @@ const pieceColors: Record<PieceType, string> = {
   S: "bg-green-500",
   T: "bg-purple-500",
   Z: "bg-red-500"
+};
+const ghostColors: Record<PieceType, string> = {
+  I: "border-2 border-cyan-400 bg-cyan-400/15",
+  J: "border-2 border-blue-500 bg-blue-500/15",
+  L: "border-2 border-orange-400 bg-orange-400/15",
+  O: "border-2 border-yellow-400 bg-yellow-400/15",
+  S: "border-2 border-green-500 bg-green-500/15",
+  T: "border-2 border-purple-500 bg-purple-500/15",
+  Z: "border-2 border-red-500 bg-red-500/15",
 };
 const pieces = {
   I: [[1, 1, 1, 1]],
@@ -73,7 +82,14 @@ export function TetrisPage() {
   const [gameOver, setGameOver] = useState(false);
 
   const reachedTarget = mode === "daily" && score >= dailyTarget;
-  const visibleBoard = useMemo(() => drawActivePiece(board, active), [active, board]);
+  const ghostPiece = useMemo(() => {
+    let ghost = { ...active };
+    while (!hasCollision(board, { ...ghost, row: ghost.row + 1 })) {
+      ghost = { ...ghost, row: ghost.row + 1 };
+    }
+    return ghost;
+  }, [active, board]);
+  const visibleBoard = useMemo(() => drawBoardWithGhost(board, active, ghostPiece), [active, board, ghostPiece]);
 
   const resetGame = useCallback((nextMode = mode) => {
     const firstType = getPieceType(0);
@@ -89,8 +105,8 @@ export function TetrisPage() {
     setGameOver(false);
   }, [mode]);
 
-  const lockPiece = useCallback(() => {
-    const merged = mergePiece(board, active);
+  const lockPiece = useCallback((pieceToLock: ActivePiece = active) => {
+    const merged = mergePiece(board, pieceToLock);
     const { nextBoard, cleared } = clearLines(merged);
     const spawned = createPiece(nextType);
 
@@ -133,6 +149,15 @@ export function TetrisPage() {
     });
   }, [board]);
 
+  const hardDrop = useCallback(() => {
+    let dropped = { ...active };
+    while (!hasCollision(board, { ...dropped, row: dropped.row + 1 })) {
+      dropped = { ...dropped, row: dropped.row + 1 };
+    }
+    setScore((current) => current + (dropped.row - active.row) * 2);
+    lockPiece(dropped);
+  }, [active, board, lockPiece]);
+
   useEffect(() => {
     if (!running || gameOver || reachedTarget) {
       return;
@@ -157,15 +182,18 @@ export function TetrisPage() {
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
         softDrop();
-      } else if (event.key === "ArrowUp" || event.key === " ") {
+      } else if (event.key === "ArrowUp") {
         event.preventDefault();
         rotateActive();
+      } else if (event.key === " ") {
+        event.preventDefault();
+        hardDrop();
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [gameOver, moveActive, reachedTarget, rotateActive, running, softDrop]);
+  }, [gameOver, hardDrop, moveActive, reachedTarget, rotateActive, running, softDrop]);
 
   useEffect(() => {
     if (mode === "daily" && score > dailyBest) {
@@ -187,12 +215,16 @@ export function TetrisPage() {
         <section className="brand-panel rounded-lg p-4 sm:p-6">
           <div className="mx-auto grid max-w-[24rem] grid-cols-10 gap-1 rounded bg-slate-950/60 p-2">
             {visibleBoard.flatMap((row, rowIndex) =>
-              row.map((cell, columnIndex) => (
-                <div
-                  key={`${rowIndex}-${columnIndex}`}
-                  className={`aspect-square rounded-sm border border-white/10 ${cell ? pieceColors[cell as PieceType] : "bg-slate-900/80"}`}
-                />
-              ))
+              row.map((cell, columnIndex) => {
+                const isGhost = typeof cell === "string" && cell.endsWith("-ghost");
+                const pieceType = isGhost ? (cell!.slice(0, -6) as PieceType) : (cell as PieceType);
+                return (
+                  <div
+                    key={`${rowIndex}-${columnIndex}`}
+                    className={`aspect-square rounded-sm ${cell ? (isGhost ? ghostColors[pieceType] : `border border-white/10 ${pieceColors[pieceType]}`) : "border border-white/10 bg-slate-900/80"}`}
+                  />
+                );
+              })
             )}
           </div>
         </section>
@@ -271,7 +303,7 @@ export function TetrisPage() {
               <ControlButton label={<ArrowRight size={18} />} onClick={() => moveActive(0, 1)} disabled={!running} />
               <div />
               <ControlButton label={<ArrowDown size={18} />} onClick={softDrop} disabled={!running} />
-              <div />
+              <ControlButton label={<ChevronsDown size={18} />} onClick={hardDrop} disabled={!running} />
             </div>
           </section>
         </aside>
@@ -350,8 +382,25 @@ function clearLines(board: Cell[][]) {
   };
 }
 
-function drawActivePiece(board: Cell[][], piece: ActivePiece) {
-  return mergePiece(board, piece);
+function drawBoardWithGhost(board: Cell[][], active: ActivePiece, ghost: ActivePiece) {
+  const result = board.map((row) => [...row]);
+  if (ghost.row !== active.row) {
+    ghost.shape.forEach((row, ri) => {
+      row.forEach((val, ci) => {
+        if (val && result[ghost.row + ri]) {
+          result[ghost.row + ri][ghost.column + ci] = `${ghost.type}-ghost`;
+        }
+      });
+    });
+  }
+  active.shape.forEach((row, ri) => {
+    row.forEach((val, ci) => {
+      if (val && result[active.row + ri]) {
+        result[active.row + ri][active.column + ci] = active.type;
+      }
+    });
+  });
+  return result;
 }
 
 function rotateShape(shape: number[][]) {

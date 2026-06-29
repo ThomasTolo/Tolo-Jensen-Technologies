@@ -22,13 +22,13 @@ export function Hero() {
           </p>
           <h1 className="brand-title max-w-4xl text-5xl font-semibold tracking-normal sm:text-7xl">
             {norwegian
-              ? "Programvarer bygget med kvalitet"
-              : "Software built with quality."}
+              ? "Apper du vil åpne. Spill du vil spille."
+              : "Apps worth opening. Games worth playing."}
           </h1>
           <p className="brand-copy mt-7 max-w-2xl text-lg leading-8">
             {norwegian
-              ? "Tolo Jensen Technologies bygger Apper og små spill."
-              : "Tolo Jensen Technologies builds apps and small games."}
+              ? "Kollekt for kollektivet, sju daglige spill, og mer på vei."
+              : "Kollekt for shared living, seven daily games, and more on the way."}
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <Link

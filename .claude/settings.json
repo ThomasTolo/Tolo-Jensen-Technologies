@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rm /Users/thoma/Desktop/Tolo-Jensen-Technologies/.git/index.lock)"
+      "Bash(rm /Users/thoma/Desktop/Tolo-Jensen-Technologies/.git/index.lock)",
+      "Bash(identify /Users/thoma/Desktop/Tolo-Jensen-Technologies/public/favicon.png /Users/thoma/Desktop/Tolo-Jensen-Technologies/public/icon.png)",
+      "Bash(sips -g pixelWidth -g pixelHeight /Users/thoma/Desktop/Tolo-Jensen-Technologies/public/favicon.png /Users/thoma/Desktop/Tolo-Jensen-Technologies/public/icon.png)",
+      "Bash(python3 -c \"from PIL import Image; print\\('PIL ok'\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(python3)"
     ],
     "additionalDirectories": [
       "/Users/thoma/Desktop/Tolo-Jensen-Technologies/.git"

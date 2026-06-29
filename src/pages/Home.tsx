@@ -18,8 +18,8 @@ export function Home() {
     {
       label: norwegian ? "Daglige spill" : "Daily games",
       text: norwegian
-        ? "Ordvakt, Klyngen, Kampbingo, Tetris, Snake og to musikkspill har daglige utfordringer og fri spilling."
-        : "Wordwatch, Cluster, Match Bingo, Tetris, Snake, and two music games have daily challenges and free play."
+        ? "Åtte spill – ordgjetting, grupper, bingo, musikk, Tetris, Snake og hyllesortering – med daglige utfordringer og fri spilling."
+        : "Eight games – word guessing, groups, bingo, music, Tetris, Snake, and shelf sorting – each with daily challenges and free play."
     },
     {
       label: norwegian ? "Prosjekter" : "Projects",
@@ -63,12 +63,12 @@ export function Home() {
       </section>
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-20 sm:px-8 md:grid-cols-3">
         <GameCard
-          title={norwegian ? "Ordvakt" : "Wordwatch"}
+          title={norwegian ? "Gjettern" : "Guesser"}
           description={norwegian ? "Gjett dagens ord på fem bokstaver." : "Guess today's five-letter word."}
           to="/games/wordle"
         />
         <GameCard
-          title={norwegian ? "Klyngen" : "Cluster"}
+          title={norwegian ? "Lenken" : "Knot"}
           description={
             norwegian
               ? "Sorter seksten ord i fire skjulte grupper."
@@ -77,7 +77,7 @@ export function Home() {
           to="/games/connections"
         />
         <GameCard
-          title={norwegian ? "Tonefeltet" : "Soundfield"}
+          title={norwegian ? "Lydboks" : "Soundbox"}
           description={norwegian ? "Løs korte musikkpreviews i et rutenett." : "Solve short music previews in a grid."}
           to="/games/tune-grid"
         />
@@ -97,9 +97,14 @@ export function Home() {
           to="/games/bingo"
         />
         <GameCard
-          title={norwegian ? "Ørekast" : "EarDrop"}
+          title={norwegian ? "Blindspor" : "BlindTrack"}
           description={norwegian ? "Gjett låten uten å kunne spille klipp på nytt." : "Guess the song without replaying clips."}
           to="/games/song-snippet"
+        />
+        <GameCard
+          title={norwegian ? "Ryddig" : "Tidyup"}
+          description={norwegian ? "Plukk opp gjenstander og match tre like for å rydde hyllene." : "Pick up items and match three of a kind to clear the shelves."}
+          to="/games/stacker"
         />
       </section>
     </main>

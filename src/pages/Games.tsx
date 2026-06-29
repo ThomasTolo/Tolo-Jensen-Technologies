@@ -18,12 +18,12 @@ export function Games() {
     >
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         <GameCard
-          title={norwegian ? "Ordvakt" : "Wordwatch"}
+          title={norwegian ? "Gjettern" : "Guesser"}
           description={norwegian ? "Gjett dagens ord på fem bokstaver." : "Guess today's five-letter word."}
           to="/games/wordle"
         />
         <GameCard
-          title={norwegian ? "Klyngen" : "Cluster"}
+          title={norwegian ? "Lenken" : "Knot"}
           description={
             norwegian
               ? "Finn fire skjulte grupper i et brett med seksten ord."
@@ -55,14 +55,19 @@ export function Games() {
           to="/games/snake"
         />
         <GameCard
-          title={norwegian ? "Tonefeltet" : "Soundfield"}
+          title={norwegian ? "Lydboks" : "Soundbox"}
           description={norwegian ? "Løs fem låttitler fra korte Apple/iTunes-previews." : "Solve five song titles from short Apple/iTunes previews."}
           to="/games/tune-grid"
         />
         <GameCard
-          title={norwegian ? "Ørekast" : "EarDrop"}
+          title={norwegian ? "Blindspor" : "BlindTrack"}
           description={norwegian ? "Gjett dagens låt. Hvert klipp kan bare spilles én gang." : "Guess today's song. Each clip can only be played once."}
           to="/games/song-snippet"
+        />
+        <GameCard
+          title={norwegian ? "Ryddig" : "Tidyup"}
+          description={norwegian ? "Plukk opp gjenstander og match tre like for å rydde hyllene." : "Pick up items and match three of a kind to clear the shelves."}
+          to="/games/stacker"
         />
       </div>
     </PageShell>

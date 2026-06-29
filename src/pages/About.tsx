@@ -83,6 +83,14 @@ export function About() {
               </p>
             </div>
           </div>
+          <a
+            href="https://www.linkedin.com/in/thomastolojensen/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block text-sm font-semibold text-brand-blue hover:underline"
+          >
+            {norwegian ? "Se profil på LinkedIn →" : "View LinkedIn profile →"}
+          </a>
         </article>
 
         <article className="brand-panel rounded-lg p-8">

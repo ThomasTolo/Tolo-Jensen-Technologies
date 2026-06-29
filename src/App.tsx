@@ -2,6 +2,7 @@ import { AnimatePresence } from "framer-motion";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
+import { ShelfSortPage } from "./games/arcade/ShelfSortPage";
 import { SnakePage } from "./games/arcade/SnakePage";
 import { TetrisPage } from "./games/arcade/TetrisPage";
 import { FootballBingoPage } from "./games/bingo/FootballBingoPage";
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/games/snake" element={<SnakePage />} />
           <Route path="/games/tune-grid" element={<TuneGridPage />} />
           <Route path="/games/song-snippet" element={<SnippetGuessPage />} />
+          <Route path="/games/stacker" element={<ShelfSortPage />} />
           <Route path="/roadmap" element={<Roadmap />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<Home />} />

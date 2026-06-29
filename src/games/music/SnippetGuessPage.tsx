@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Play } from "lucide-react";
 import { PageShell } from "../../components/PageShell";
 import { useLanguage } from "../../context/LanguageContext";
@@ -24,6 +24,12 @@ export function SnippetGuessPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const attempt = Math.min(results.length, snippetDurations.length - 1);
   const finished = results.includes("correct") || results.length >= snippetDurations.length;
+
+  useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
 
   async function playSnippet() {
     if (finished || playing) {

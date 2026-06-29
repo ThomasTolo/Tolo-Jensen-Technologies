@@ -5,15 +5,15 @@ export function About() {
   const { language } = useLanguage();
   const norwegian = language === "no";
   const stats = norwegian
-    ? [
+      ? [
         ["01", "Offisiell merkevare"],
-        ["03", "Daglige spill"],
+        ["07", "Daglige spill"],
         ["React", "Primær frontend"],
         ["Vercel", "Publisering"]
       ]
-    : [
+      : [
         ["01", "Official brand"],
-        ["03", "Daily games"],
+        ["07", "Daily games"],
         ["React", "Primary frontend"],
         ["Vercel", "Deployment"]
       ];
@@ -91,29 +91,37 @@ export function About() {
           </p>
           <div className="mt-5 space-y-5">
             <div>
+              <h2 className="text-xl font-semibold">{norwegian ? "Glassburet-nettside" : "Glassburet Website"}</h2>
+              <p className="brand-copy mt-2 leading-7">
+                {norwegian
+                  ? "Offisiell nettside for Glassburet, designet og utviklet med moderne webteknologi."
+                  : "Official website for Glassburet, designed and developed with modern web technologies."}
+              </p>
+            </div>
+            <div>
               <h2 className="text-xl font-semibold">FeedApp</h2>
               <p className="brand-copy mt-2 leading-7">
                 {norwegian
                   ? "Et fullstack universitetsprosjekt bygget i team med moderne techstack."
-                  : "A full-stack university project built with a modern stack."}
+                  : "A full-stack university project built with a modern tech stack."}
               </p>
             </div>
             <div>
-              <h2 className="text-xl font-semibold">{norwegian ? "Databaseutvikling" : "Database development"}</h2>
+              <h2 className="text-xl font-semibold">{norwegian ? "Kalenderapp" : "Calendar App"}</h2>
               <p className="brand-copy mt-2 leading-7">
                 {norwegian
-                  ? "Bysykkel-applikasjon i Shiny for Python med SQLite i backend."
-                  : "Bike-sharing application in Shiny for Python with a SQLite backend."}
+                  ? "En personlig kalenderapplikasjon for enkel planlegging og hendelsesoversikt."
+                  : "A personal calendar application for simple scheduling and event overview."}
               </p>
             </div>
-            <div>
-              <h2 className="text-xl font-semibold">Java Snake</h2>
-              <p className="brand-copy mt-2 leading-7">
-                {norwegian
-                  ? "Objektorientert Java-implementasjon av Snake fra tidligere informatikkemne."
-                  : "Object-oriented Java implementation of Snake from early informatics coursework."}
-              </p>
-            </div>
+            <a
+              href="https://github.com/ThomasTolo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-block text-sm font-semibold text-brand-blue hover:underline"
+            >
+              {norwegian ? "Se alle prosjekter på GitHub →" : "See all projects on GitHub →"}
+            </a>
           </div>
         </article>
       </section>

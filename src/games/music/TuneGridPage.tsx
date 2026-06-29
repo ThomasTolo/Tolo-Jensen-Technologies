@@ -57,6 +57,12 @@ export function TuneGridPage() {
   );
 
   useEffect(() => {
+    return () => {
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       const key = event.key;
 

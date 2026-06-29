@@ -18,14 +18,14 @@ export function Home() {
     {
       label: norwegian ? "Daglige spill" : "Daily games",
       text: norwegian
-        ? "Ord, grupper, VM-bingo og to musikkspill har 100 daglige brett og bytter ved midnatt."
-        : "Word guessing, groups, World Cup bingo, and two music games have 100 daily boards and change at midnight."
+        ? "Ordvakt, Klyngen, Kampbingo, Tetris, Snake og to musikkspill har daglige utfordringer og fri spilling."
+        : "Wordwatch, Cluster, Match Bingo, Tetris, Snake, and two music games have daily challenges and free play."
     },
     {
       label: norwegian ? "Prosjekter" : "Projects",
       text: norwegian
-        ? "Kollekt er nyeste prosjekt: et ryddigere sted for oppgaver, utgifter, planer og alt som følger med å bo sammen."
-        : "Kollekt is the latest project: a cleaner place for chores, expenses, plans, and everything that comes with living together."
+        ? "Kollekt er det aktive prosjektet: et ryddigere sted for oppgaver, utgifter, planer og alt som følger med å bo sammen. Tidligere prosjekter finnes på GitHub."
+        : "Kollekt is the active project: a cleaner space for chores, expenses, plans, and everything that comes with living together. Earlier projects are on GitHub."
     }
   ];
 
@@ -63,12 +63,12 @@ export function Home() {
       </section>
       <section className="mx-auto grid max-w-7xl gap-6 px-5 py-20 sm:px-8 md:grid-cols-3">
         <GameCard
-          title={norwegian ? "Dagens ord" : "Daily Word Guess"}
+          title={norwegian ? "Ordvakt" : "Wordwatch"}
           description={norwegian ? "Gjett dagens ord på fem bokstaver." : "Guess today's five-letter word."}
           to="/games/wordle"
         />
         <GameCard
-          title={norwegian ? "Dagens grupper" : "Daily Groups"}
+          title={norwegian ? "Klyngen" : "Cluster"}
           description={
             norwegian
               ? "Sorter seksten ord i fire skjulte grupper."
@@ -77,17 +77,27 @@ export function Home() {
           to="/games/connections"
         />
         <GameCard
-          title={norwegian ? "Lydrute" : "Tune Grid"}
+          title={norwegian ? "Tonefeltet" : "Soundfield"}
           description={norwegian ? "Løs korte musikkpreviews i et rutenett." : "Solve short music previews in a grid."}
           to="/games/tune-grid"
         />
         <GameCard
-          title={norwegian ? "VM-bingo" : "World Cup Bingo"}
+          title="Tetris"
+          description={norwegian ? "Rydd linjer og nå dagens poengmål." : "Clear lines and reach today's score target."}
+          to="/games/tetris"
+        />
+        <GameCard
+          title="Snake"
+          description={norwegian ? "Spis mat, voks og jag dagens mål." : "Eat food, grow, and chase today's target."}
+          to="/games/snake"
+        />
+        <GameCard
+          title={norwegian ? "Kampbingo" : "Match Bingo"}
           description={norwegian ? "Marker realistiske VM-hendelser." : "Mark realistic World Cup events."}
           to="/games/bingo"
         />
         <GameCard
-          title={norwegian ? "Låtklipp" : "Snippet Guess"}
+          title={norwegian ? "Ørekast" : "EarDrop"}
           description={norwegian ? "Gjett låten uten å kunne spille klipp på nytt." : "Guess the song without replaying clips."}
           to="/games/song-snippet"
         />

@@ -2,6 +2,8 @@ import { AnimatePresence } from "framer-motion";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Footer } from "./components/Footer";
 import { Navbar } from "./components/Navbar";
+import { SnakePage } from "./games/arcade/SnakePage";
+import { TetrisPage } from "./games/arcade/TetrisPage";
 import { FootballBingoPage } from "./games/bingo/FootballBingoPage";
 import { ConnectionsPage } from "./games/connections/ConnectionsPage";
 import { SnippetGuessPage } from "./games/music/SnippetGuessPage";
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/games/wordle" element={<WordlePage />} />
           <Route path="/games/connections" element={<ConnectionsPage />} />
           <Route path="/games/bingo" element={<FootballBingoPage />} />
+          <Route path="/games/tetris" element={<TetrisPage />} />
+          <Route path="/games/snake" element={<SnakePage />} />
           <Route path="/games/tune-grid" element={<TuneGridPage />} />
           <Route path="/games/song-snippet" element={<SnippetGuessPage />} />
           <Route path="/roadmap" element={<Roadmap />} />

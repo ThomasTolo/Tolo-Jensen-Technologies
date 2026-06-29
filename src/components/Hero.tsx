@@ -27,8 +27,8 @@ export function Hero() {
           </h1>
           <p className="brand-copy mt-7 max-w-2xl text-lg leading-8">
             {norwegian
-              ? "Tolo Jensen Technologies bygger Kollekt, nyttige verktøy og små spill folk faktisk kommer tilbake til."
-              : "Tolo Jensen Technologies builds Kollekt, useful tools, and small games people actually return to."}
+              ? "Tolo Jensen Technologies bygger Apper og små spill."
+              : "Tolo Jensen Technologies builds apps and small games."}
           </p>
           <div className="mt-9 flex flex-wrap gap-4">
             <Link

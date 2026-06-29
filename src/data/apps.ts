@@ -54,26 +54,26 @@ export const apps: AppInfo[] = [
   },
   {
     slug: "app-2",
-    name: "App 2",
+    name: "Social Game",
     status: "Exploration",
-    description: "A future product from Tolo Jensen Technologies.",
+    description: "An upcoming social game from Tolo Jensen Technologies.",
     technologies: ["React", "TypeScript"],
     norwegian: {
       status: "Utforskes",
       tagline: "Neste idé i arbeid.",
-      description: "Et fremtidig produkt fra Tolo Jensen Technologies."
+      description: "Et kommende sosialt spill fra Tolo Jensen Technologies."
     }
   },
   {
     slug: "app-3",
-    name: "App 3",
+    name: "Game",
     status: "Planned",
-    description: "A focused software product currently on the roadmap.",
-    technologies: ["Product Design", "Frontend"],
+    description: "A game currently in the planning phase. Technology not yet decided.",
+    technologies: [],
     norwegian: {
       status: "Planlagt",
       tagline: "På vei inn i planen.",
-      description: "Et fokusert programvareprodukt som ligger på planen."
+      description: "Et spill som er under planlegging. Teknologi er ikke valgt ennå."
     }
   }
 ];

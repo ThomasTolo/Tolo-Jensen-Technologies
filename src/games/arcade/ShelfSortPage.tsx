@@ -55,8 +55,8 @@ function makeRng(seed: number) {
   const next = () => { s = Math.imul(1664525, s) + 1013904223 | 0; return (s >>> 0) / 4294967296; };
   return {
     int: (lo: number, hi: number) => Math.floor(next() * (hi - lo + 1)) + lo,
-    pick: <T>(arr: readonly T[]) => arr[Math.floor(next() * arr.length)] as T,
-    shuffle: <T>(arr: T[]): T[] => {
+    pick: <T,>(arr: readonly T[]) => arr[Math.floor(next() * arr.length)] as T,
+    shuffle: <T,>(arr: T[]): T[] => {
       const a = [...arr];
       for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(next() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
       return a;

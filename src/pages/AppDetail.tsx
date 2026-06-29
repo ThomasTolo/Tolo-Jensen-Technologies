@@ -206,12 +206,38 @@ export function AppDetail() {
               <summary className="cursor-pointer text-sm font-semibold">
                 {languageIsNorwegian ? "Samarbeidspartnere" : "Collaboration partners"}
               </summary>
-              <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.16em] text-brand-blue">
-                {languageIsNorwegian ? "Aktiv partner" : "Active partner"}
-              </label>
-              <select className="brand-control mt-2 w-full rounded border border-line px-3 py-2 text-sm">
-                <option>Thomas Tolo Jensen (Owner)</option>
-              </select>
+              <ul className="brand-copy mt-4 space-y-2 text-sm leading-6">
+                <li>
+                  <a href="https://www.linkedin.com/in/thomastolojensen/" target="_blank" rel="noreferrer">
+                    Thomas Tolo Jensen (Owner)
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/magnus-fjeldstad/" target="_blank" rel="noreferrer">
+                    Magnus Fjeldstad
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/jonas-heen-opsahl-54043b244/" target="_blank" rel="noreferrer">
+                    Jonas Heen Opsahl
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/fredric-hegland-8a8972206/" target="_blank" rel="noreferrer">
+                    Fredric Hegland
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/erlend-andre-hoentorp/" target="_blank" rel="noreferrer">
+                    Erlend André Høntorp
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.linkedin.com/in/tobias-skodven-496835240/" target="_blank" rel="noreferrer">
+                    Tobias Skodven
+                  </a>
+                </li>
+              </ul>
             </details>
           ) : null}
 

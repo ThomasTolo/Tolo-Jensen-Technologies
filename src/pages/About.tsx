@@ -36,8 +36,8 @@ export function About() {
         <div className="brand-panel rounded-lg p-8">
           <p className="brand-copy text-xl leading-9">
             {norwegian
-              ? "Jeg er student og utvikler. Jeg fullførte en bachelor i informatikk, matematikk og økonomi, og tar nå en samarbeidsmaster i programvareutvikling ved Universitetet i Bergen og HVL. Inne i masteren har jeg valgt maskinlæring som retning."
-              : "I am a student and developer. I completed a bachelor in informatics, mathematics, and economics, and I am now taking a collaborative Software Engineering master at the University of Bergen and HVL. Inside the master, I have chosen a machine-learning branch."}
+              ? "Jeg er student og utvikler. Jeg fullførte en bachelor i informatikk, matematikk og økonomi, og tar nå master i programvareutvikling ved Universitetet i Bergen og HVL. Inne i masteren har jeg valgt maskinlæring som retning."
+              : "I am a student and developer. I completed a bachelor in informatics, mathematics, and economics, and I am now taking a Software Engineering master at the University of Bergen and HVL. Inside the master, I have chosen a machine-learning branch."}
           </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -65,8 +65,8 @@ export function About() {
               <p className="brand-copy mt-1 text-sm">2025 - 2027</p>
               <p className="brand-copy mt-2 leading-7">
                 {norwegian
-                  ? "Samarbeidsmaster ved UiB og HVL, med programvareutvikling som hovedløp og maskinlæring som valgt retning."
-                  : "Collaborative master at UiB and HVL, with software engineering as the main track and machine learning as my chosen branch."}
+                  ? "Master ved UiB og HVL, med programvareutvikling som hovedløp og maskinlæring som valgt retning."
+                  : "Master at UiB and HVL, with software engineering as the main track and machine learning as my chosen branch."}
               </p>
             </div>
             <div>
@@ -95,7 +95,7 @@ export function About() {
               <p className="brand-copy mt-2 leading-7">
                 {norwegian
                   ? "Et fullstack universitetsprosjekt bygget i team med moderne techstack."
-                  : "A collaborative full-stack university project built with a modern stack."}
+                  : "A full-stack university project built with a modern stack."}
               </p>
             </div>
             <div>

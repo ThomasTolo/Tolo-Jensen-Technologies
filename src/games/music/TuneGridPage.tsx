@@ -83,8 +83,20 @@ export function TuneGridPage() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [activeEntry, selectedKey, setLetters]);
 
+  function stopPreview() {
+    audioRef.current?.pause();
+    setPlayingEntryId(null);
+  }
+
   function chooseCell(cell: Cell, entryId?: string) {
-    setSelectedKey(cellKey(cell.row, cell.column));
+    const nextSelectedKey = cellKey(cell.row, cell.column);
+    const nextEntryId = entryId ?? (cell.entries.includes(activeEntryId) ? activeEntryId : cell.entries[0]);
+
+    if (nextSelectedKey !== selectedKey || nextEntryId !== activeEntryId) {
+      stopPreview();
+    }
+
+    setSelectedKey(nextSelectedKey);
 
     if (entryId) {
       setActiveEntryId(entryId);
@@ -228,7 +240,6 @@ export function TuneGridPage() {
                           type="button"
                           onClick={() => {
                             const start = puzzle.cells[cellKey(entry.row, entry.column)];
-                            setActiveEntryId(entry.id);
                             if (start) {
                               chooseCell(start, entry.id);
                             }

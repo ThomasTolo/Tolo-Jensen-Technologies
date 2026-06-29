@@ -49,9 +49,11 @@ const kollektWalkthrough: KollektWalkthroughItem[] = [
   {
     image: kollektAsset("4) Code.png"),
     title: "Got a code? You're in.",
-    description: "Join with a household code and slot into the rotation right away.",
+    description:
+      "Ask the person who created the home, or anyone already in it, for the code from their profile and join the rotation right away.",
     norwegianTitle: "Har du en kode? Da er du inne.",
-    norwegianDescription: "Bli med via huskode og kom rett inn i oppgavefordelingen."
+    norwegianDescription:
+      "Be den som opprettet hjemmet, eller noen som allerede er med, finne koden i profilen sin, så kommer du rett inn i oppgavefordelingen."
   },
   {
     image: kollektAsset("7) Tasks.png"),

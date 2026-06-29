@@ -35,14 +35,14 @@ export const apps: AppInfo[] = [
         "En mobil-app for kollektiv: oppgaver, utgifter, handleliste, kalender, chat, belønninger og drikkespill samlet på ett sted."
     },
     highlights: [
-      "Split expenses and settle up with payment links",
-      "Keep chores, shopping, events, quiet hours, and house rules together",
-      "Make the household feel lighter with XP, kudos, and party games"
+      "Auto-rotate chores, track progress, and reward completed tasks with XP",
+      "Plan shared life with shopping, calendar, house rules, chat, polls, and kudos",
+      "Split expenses, track bottle deposits, compare leaderboards, and start party games"
     ],
     norwegianHighlights: [
-      "Samle oppgaver, handling, kalender, stilletid og husregler",
-      "Del utgifter og gjør opp",
-      "Gjør hjemmet litt lettere med XP, kudos og partyspill"
+      "Roter oppgaver automatisk, følg fremdrift og belønn fullførte gjøremål med XP",
+      "Planlegg hverdagen med handleliste, kalender, husregler, chat, avstemninger og kudos",
+      "Del utgifter, følg pant, sammenlign topplister og start partyspill"
     ],
     technicalHighlights: [
       "React + TypeScript Vite frontend with Capacitor iOS/Android shells",
